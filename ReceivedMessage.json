@@ -1,0 +1,434 @@
+{
+"BaseResponse": {
+"Ret": 0,
+"ErrMsg": ""
+}
+,
+"AddMsgCount": 5,
+"AddMsgList": [{
+"MsgId": "7318483579373924965",
+"FromUserName": "@e24439096308969756e667d06f33a50e",
+"ToUserName": "@b18d3f16a138505fd2ef663815925561948e2f970a910bba56396a5a62e7bf30",
+"MsgType": 1,
+"Content": "睡觉睡觉就是计算机计算机三级到你家都觉得那女的",
+"Status": 3,
+"ImgStatus": 1,
+"CreateTime": 1494261110,
+"VoiceLength": 0,
+"PlayLength": 0,
+"FileName": "",
+"FileSize": "",
+"MediaId": "",
+"Url": "",
+"AppMsgType": 0,
+"StatusNotifyCode": 0,
+"StatusNotifyUserName": "",
+"RecommendInfo": {
+"UserName": "",
+"NickName": "",
+"QQNum": 0,
+"Province": "",
+"City": "",
+"Content": "",
+"Signature": "",
+"Alias": "",
+"Scene": 0,
+"VerifyFlag": 0,
+"AttrStatus": 0,
+"Sex": 0,
+"Ticket": "",
+"OpCode": 0
+}
+,
+"ForwardFlag": 0,
+"AppInfo": {
+"AppID": "",
+"Type": 0
+}
+,
+"HasProductId": 0,
+"Ticket": "",
+"ImgHeight": 0,
+"ImgWidth": 0,
+"SubMsgType": 0,
+"NewMsgId": 7318483579373924965,
+"OriContent": ""
+}
+,{
+"MsgId": "7399116508927820043",
+"FromUserName": "@e24439096308969756e667d06f33a50e",
+"ToUserName": "@b18d3f16a138505fd2ef663815925561948e2f970a910bba56396a5a62e7bf30",
+"MsgType": 1,
+"Content": "星河大帝哈哈哈",
+"Status": 3,
+"ImgStatus": 1,
+"CreateTime": 1494261112,
+"VoiceLength": 0,
+"PlayLength": 0,
+"FileName": "",
+"FileSize": "",
+"MediaId": "",
+"Url": "",
+"AppMsgType": 0,
+"StatusNotifyCode": 0,
+"StatusNotifyUserName": "",
+"RecommendInfo": {
+"UserName": "",
+"NickName": "",
+"QQNum": 0,
+"Province": "",
+"City": "",
+"Content": "",
+"Signature": "",
+"Alias": "",
+"Scene": 0,
+"VerifyFlag": 0,
+"AttrStatus": 0,
+"Sex": 0,
+"Ticket": "",
+"OpCode": 0
+}
+,
+"ForwardFlag": 0,
+"AppInfo": {
+"AppID": "",
+"Type": 0
+}
+,
+"HasProductId": 0,
+"Ticket": "",
+"ImgHeight": 0,
+"ImgWidth": 0,
+"SubMsgType": 0,
+"NewMsgId": 7399116508927820043,
+"OriContent": ""
+}
+,{
+"MsgId": "3565240052040448319",
+"FromUserName": "@e24439096308969756e667d06f33a50e",
+"ToUserName": "@b18d3f16a138505fd2ef663815925561948e2f970a910bba56396a5a62e7bf30",
+"MsgType": 1,
+"Content": "那些巴不得爸爸",
+"Status": 3,
+"ImgStatus": 1,
+"CreateTime": 1494261114,
+"VoiceLength": 0,
+"PlayLength": 0,
+"FileName": "",
+"FileSize": "",
+"MediaId": "",
+"Url": "",
+"AppMsgType": 0,
+"StatusNotifyCode": 0,
+"StatusNotifyUserName": "",
+"RecommendInfo": {
+"UserName": "",
+"NickName": "",
+"QQNum": 0,
+"Province": "",
+"City": "",
+"Content": "",
+"Signature": "",
+"Alias": "",
+"Scene": 0,
+"VerifyFlag": 0,
+"AttrStatus": 0,
+"Sex": 0,
+"Ticket": "",
+"OpCode": 0
+}
+,
+"ForwardFlag": 0,
+"AppInfo": {
+"AppID": "",
+"Type": 0
+}
+,
+"HasProductId": 0,
+"Ticket": "",
+"ImgHeight": 0,
+"ImgWidth": 0,
+"SubMsgType": 0,
+"NewMsgId": 3565240052040448319,
+"OriContent": ""
+}
+,{
+"MsgId": "834942286247188981",
+"FromUserName": "@e24439096308969756e667d06f33a50e",
+"ToUserName": "@b18d3f16a138505fd2ef663815925561948e2f970a910bba56396a5a62e7bf30",
+"MsgType": 1,
+"Content": "就喜欢都很好",
+"Status": 3,
+"ImgStatus": 1,
+"CreateTime": 1494261116,
+"VoiceLength": 0,
+"PlayLength": 0,
+"FileName": "",
+"FileSize": "",
+"MediaId": "",
+"Url": "",
+"AppMsgType": 0,
+"StatusNotifyCode": 0,
+"StatusNotifyUserName": "",
+"RecommendInfo": {
+"UserName": "",
+"NickName": "",
+"QQNum": 0,
+"Province": "",
+"City": "",
+"Content": "",
+"Signature": "",
+"Alias": "",
+"Scene": 0,
+"VerifyFlag": 0,
+"AttrStatus": 0,
+"Sex": 0,
+"Ticket": "",
+"OpCode": 0
+}
+,
+"ForwardFlag": 0,
+"AppInfo": {
+"AppID": "",
+"Type": 0
+}
+,
+"HasProductId": 0,
+"Ticket": "",
+"ImgHeight": 0,
+"ImgWidth": 0,
+"SubMsgType": 0,
+"NewMsgId": 834942286247188981,
+"OriContent": ""
+}
+,{
+"MsgId": "5383283756712319430",
+"FromUserName": "@e24439096308969756e667d06f33a50e",
+"ToUserName": "@b18d3f16a138505fd2ef663815925561948e2f970a910bba56396a5a62e7bf30",
+"MsgType": 1,
+"Content": "见好就收",
+"Status": 3,
+"ImgStatus": 1,
+"CreateTime": 1494261118,
+"VoiceLength": 0,
+"PlayLength": 0,
+"FileName": "",
+"FileSize": "",
+"MediaId": "",
+"Url": "",
+"AppMsgType": 0,
+"StatusNotifyCode": 0,
+"StatusNotifyUserName": "",
+"RecommendInfo": {
+"UserName": "",
+"NickName": "",
+"QQNum": 0,
+"Province": "",
+"City": "",
+"Content": "",
+"Signature": "",
+"Alias": "",
+"Scene": 0,
+"VerifyFlag": 0,
+"AttrStatus": 0,
+"Sex": 0,
+"Ticket": "",
+"OpCode": 0
+}
+,
+"ForwardFlag": 0,
+"AppInfo": {
+"AppID": "",
+"Type": 0
+}
+,
+"HasProductId": 0,
+"Ticket": "",
+"ImgHeight": 0,
+"ImgWidth": 0,
+"SubMsgType": 0,
+"NewMsgId": 5383283756712319430,
+"OriContent": ""
+}
+],
+"ModContactCount": 1,
+"ModContactList": [{
+"UserName": "@@aa039c5c6149cc7b14a2aa9e70f314be349e4692c662c7abf939828122da3544",
+"NickName": "leeweoppp",
+"Sex": 0,
+"HeadImgUpdateFlag": 1,
+"ContactType": 0,
+"Alias": "",
+"ChatRoomOwner": "@b18d3f16a138505fd2ef663815925561948e2f970a910bba56396a5a62e7bf30",
+"HeadImgUrl": "/cgi-bin/mmwebwx-bin/webwxgetheadimg?seq=0&username=@@aa039c5c6149cc7b14a2aa9e70f314be349e4692c662c7abf939828122da3544&skey=@crypt_b0d2e6dd_13141d62426acb6d724b8c09e002fcd1",
+"ContactFlag": 3,
+"MemberCount": 3,
+"MemberList": [{
+"Uin": 0,
+"UserName": "@b18d3f16a138505fd2ef663815925561948e2f970a910bba56396a5a62e7bf30",
+"NickName": "mra",
+"AttrStatus": 33558565,
+"PYInitial": "",
+"PYQuanPin": "",
+"RemarkPYInitial": "",
+"RemarkPYQuanPin": "",
+"MemberStatus": 0,
+"DisplayName": "",
+"KeyWord": ""
+}
+,{
+"Uin": 0,
+"UserName": "@e24439096308969756e667d06f33a50e",
+"NickName": "cp4",
+"AttrStatus": 230303,
+"PYInitial": "",
+"PYQuanPin": "",
+"RemarkPYInitial": "",
+"RemarkPYQuanPin": "",
+"MemberStatus": 0,
+"DisplayName": "",
+"KeyWord": ""
+}
+,{
+"Uin": 0,
+"UserName": "@d5e1f7c24bfe2f68115e7efa739f6c777f37e02e38180e3ec10b462ca34b4e36",
+"NickName": "caesaris",
+"AttrStatus": 234533,
+"PYInitial": "",
+"PYQuanPin": "",
+"RemarkPYInitial": "",
+"RemarkPYQuanPin": "",
+"MemberStatus": 0,
+"DisplayName": "",
+"KeyWord": ""
+}
+],
+"HideInputBarFlag": 0,
+"Signature": "",
+"VerifyFlag": 0,
+"RemarkName": "",
+"Statues": 1,
+"AttrStatus": 0,
+"Province": "",
+"City": "",
+"SnsFlag": 0,
+"KeyWord": ""
+}
+],
+"DelContactCount": 0,
+"DelContactList": [],
+"ModChatRoomMemberCount": 0,
+"ModChatRoomMemberList": [],
+"Profile": {
+"BitFlag": 0,
+"UserName": {
+"Buff": ""
+}
+,
+"NickName": {
+"Buff": ""
+}
+,
+"BindUin": 0,
+"BindEmail": {
+"Buff": ""
+}
+,
+"BindMobile": {
+"Buff": ""
+}
+,
+"Status": 0,
+"Sex": 0,
+"PersonalCard": 0,
+"Alias": "",
+"HeadImgUpdateFlag": 0,
+"HeadImgUrl": "",
+"Signature": ""
+}
+,
+"ContinueFlag": 0,
+"SyncKey": {
+"Count": 9,
+"List": [{
+"Key": 1,
+"Val": 655503706
+}
+,{
+"Key": 2,
+"Val": 655503747
+}
+,{
+"Key": 3,
+"Val": 655503705
+}
+,{
+"Key": 11,
+"Val": 655503720
+}
+,{
+"Key": 13,
+"Val": 655502148
+}
+,{
+"Key": 201,
+"Val": 1494261118
+}
+,{
+"Key": 203,
+"Val": 1494250087
+}
+,{
+"Key": 1000,
+"Val": 1494238861
+}
+,{
+"Key": 1001,
+"Val": 1494238892
+}
+]
+}
+,
+"SKey": "",
+"SyncCheckKey": {
+"Count": 9,
+"List": [{
+"Key": 1,
+"Val": 655503706
+}
+,{
+"Key": 2,
+"Val": 655503747
+}
+,{
+"Key": 3,
+"Val": 655503705
+}
+,{
+"Key": 11,
+"Val": 655503720
+}
+,{
+"Key": 13,
+"Val": 655502148
+}
+,{
+"Key": 201,
+"Val": 1494261118
+}
+,{
+"Key": 203,
+"Val": 1494250087
+}
+,{
+"Key": 1000,
+"Val": 1494238861
+}
+,{
+"Key": 1001,
+"Val": 1494238892
+}
+]
+}
+
+}
