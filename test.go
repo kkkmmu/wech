@@ -33,9 +33,17 @@ type wechat struct {
 	BaseRequest *BaseRequest
 	DeviceID    string
 	userAgent   string
-	GroupList   []*Member
+	GroupList   []Member
 	SyncServer  string
 	SyncKey     *SyncKey
+	UserName    string
+	NickName    string
+	ContactDB   map[string]Member
+}
+
+type StatusNotifyResponse struct {
+	BaseResponse *BaseResponse `json:"BaseResponse"`
+	MsgId        string        `json:"MsgId"`
 }
 
 type User struct {
@@ -97,37 +105,40 @@ type Contact struct {
 }
 
 type Member struct {
-	Uin              int64  `json:"Uin"`
-	UserName         string `json:"UserName"`
-	NickName         string `json:"NickName"`
-	HeadImgUrl       string `json:"HeadImgUrl"`
-	ContactFlag      int    `json:"ContactFlag"`
-	MemberCount      int    `json:"MemberCount"`
-	MemberList       []User `json:"MemberList"`
-	RemarkName       string `json:"RemarkName"`
-	HideInputBarFlag int    `json:"HideInputBarFlag"`
-	Sex              int    `json:"Sex"`
-	Signature        string `json:"Signature"`
-	VerifyFlag       int    `json:"VerifyFlag"`
-	OwnerUin         int    `json:"OwnerUin"`
-	PYInitial        string `json:"PYInitial"`
-	PYQuanPin        string `json:"PYQuanPin"`
-	RemarkPYInitial  string `json:"RemarkPYInitial"`
-	RemarkPYQuanPin  string `json:"RemarkPYQuanPin"`
-	StarFriend       int    `json:"StarFriend"`
-	AppAccountFlag   int    `json:"AppAccountFlag"`
-	Statues          int    `json:"Statues"`
-	AttrStatus       int    `json:"AttrStatus"`
-	Province         string `json:"Province"`
-	City             string `json:"City"`
-	Alias            string `json:"Alias"`
-	SnsFlag          int    `json:"SnsFlag"`
-	UniFriend        int    `json:"UniFriend"`
-	DisplayName      string `json:"DisplayName"`
-	ChatRoomId       int    `json:"ChatRoomId"`
-	KeyWord          string `json:"KeyWord"`
-	EncryChatRoomId  string `json:"EncryChatRoomId"`
-	IsOwner          int    `json:"IsOwner"`
+	Uin               int64  `json:"Uin"`
+	UserName          string `json:"UserName"`
+	NickName          string `json:"NickName"`
+	HeadImgUrl        string `json:"HeadImgUrl"`
+	ContactFlag       int    `json:"ContactFlag"`
+	MemberCount       int    `json:"MemberCount"`
+	MemberList        []User `json:"MemberList"`
+	RemarkName        string `json:"RemarkName"`
+	HideInputBarFlag  int    `json:"HideInputBarFlag"`
+	Sex               int    `json:"Sex"`
+	Signature         string `json:"Signature"`
+	VerifyFlag        int    `json:"VerifyFlag"`
+	OwnerUin          int    `json:"OwnerUin"`
+	PYInitial         string `json:"PYInitial"`
+	PYQuanPin         string `json:"PYQuanPin"`
+	RemarkPYInitial   string `json:"RemarkPYInitial"`
+	RemarkPYQuanPin   string `json:"RemarkPYQuanPin"`
+	StarFriend        int    `json:"StarFriend"`
+	AppAccountFlag    int    `json:"AppAccountFlag"`
+	Statues           int    `json:"Statues"`
+	AttrStatus        int    `json:"AttrStatus"`
+	Province          string `json:"Province"`
+	City              string `json:"City"`
+	Alias             string `json:"Alias"`
+	SnsFlag           int    `json:"SnsFlag"`
+	UniFriend         int    `json:"UniFriend"`
+	DisplayName       string `json:"DisplayName"`
+	ChatRoomId        int    `json:"ChatRoomId"`
+	KeyWord           string `json:"KeyWord"`
+	EncryChatRoomId   string `json:"EncryChatRoomId"`
+	IsOwner           int    `json:"IsOwner"`
+	HeadImgUpdateFlag int    `json:"HeadImgUpdateFlag"`
+	ContactType       int    `json:"ContactType"`
+	ChatRoomOwner     string `json:"ChatRoomOwner"`
 }
 
 type CommonReqBody struct {
@@ -146,7 +157,7 @@ type CommonReqBody struct {
 	MediaType          int
 	Scene              int
 	Count              int
-	List               []*Member
+	List               []Member
 	Opcode             int
 	SceneList          []int
 	SceneListCount     int
@@ -159,35 +170,247 @@ type CommonReqBody struct {
 	Topic              string
 }
 
+/*
+{
+	"MsgId": "7318483579373924965",
+	"FromUserName": "@e24439096308969756e667d06f33a50e",
+	"ToUserName": "@b18d3f16a138505fd2ef663815925561948e2f970a910bba56396a5a62e7bf30",
+	"MsgType": 1,
+	"Content": "睡觉睡觉就是计算机计算机三级到你家都觉得那女的",
+	"Status": 3,
+	"ImgStatus": 1,
+	"CreateTime": 1494261110,
+	"VoiceLength": 0,
+	"PlayLength": 0,
+	"FileName": "",
+	"FileSize": "",
+	"MediaId": "",
+	"Url": "",
+	"AppMsgType": 0,
+	"StatusNotifyCode": 0,
+	"StatusNotifyUserName": "",
+	"RecommendInfo": {
+	    "UserName": "",
+	    "NickName": "",
+	    "QQNum": 0,
+	    "Province": "",
+	    "City": "",
+	    "Content": "",
+	    "Signature": "",
+	    "Alias": "",
+	    "Scene": 0,
+	    "VerifyFlag": 0,
+	    "AttrStatus": 0,
+	    "Sex": 0,
+	    "Ticket": "",
+	    "OpCode": 0
+	}
+	,
+	"ForwardFlag": 0,
+	"AppInfo": {
+	    "AppID": "",
+	    "Type": 0
+	}
+	,
+	"HasProductId": 0,
+	"Ticket": "",
+	"ImgHeight": 0,
+	"ImgWidth": 0,
+	"SubMsgType": 0,
+	"NewMsgId": 7318483579373924965,
+	"OriContent": ""
+    }
+*/
+type Message struct {
+	MsgId                string        `json:"MsgId"`
+	FromUserName         string        `json:"FromUserName"`
+	ToUserName           string        `json:"ToUserName"`
+	MsgType              int           `json:"MsgType"`
+	Content              string        `json:"Content"`
+	Status               int           `json:"Status"`
+	ImgStatus            int           `json:"ImgStatus"`
+	CreateTime           int           `json:"CreateTime"`
+	VoiceLength          int           `json:"VoiceLength"`
+	PlayLength           int           `json:"PlayLength"`
+	FileName             string        `json:"FileName"`
+	FileSize             string        `json:"FileSize"`
+	MediaId              string        `json:"MediaId"`
+	Url                  string        `json:"Url"`
+	AppMsgType           int           `json:"AppMsgType"`
+	StatusNotifyCode     int           `json:"StatusNotifyCode"`
+	StatusNotifyUserName string        `json:"StatusNotifyUserName"`
+	RecommendInfo        RecommendInfo `json:"RecommendInfo"`
+	ForwardFlag          int           `json:"ForwardFlag"`
+	AppInfo              AppInfo       `json:"AppInfo"`
+	HasProductId         int           `json:"HasProductId"`
+	Ticket               string        `json:"Ticket"`
+	ImgHeight            int           `json:"ImgHeight"`
+	ImgWidth             int           `json:"ImgWidth"`
+	SubMsgType           int           `json:"SubMsgType"`
+	NewMsgId             int64         `json:"NewMsgId"`
+	OriContent           string        `json:"OriContent"`
+}
+
+type TextMessage struct {
+	Type         int
+	Content      string
+	FromUserName string
+	ToUserName   string
+	LocalID      int
+	ClientMsgId  int
+}
+
+// MediaMessage
+type MediaMessage struct {
+	Type         int
+	Content      string
+	FromUserName string
+	ToUserName   string
+	LocalID      int
+	ClientMsgId  int
+	MediaId      string
+}
+
+// EmotionMessage: gif/emoji message struct
+type EmotionMessage struct {
+	ClientMsgId  int
+	EmojiFlag    int
+	FromUserName string
+	LocalID      int
+	MediaId      string
+	ToUserName   string
+	Type         int
+}
+
+type SendMessageResponse struct {
+	BaseResponse BaseResponse
+	MsgID        string `json:"MsgId"`
+	LocalID      int    `json:"LocalID"`
+}
+
+type RecommendInfo struct {
+	UserName   string `json:"UserName"`
+	NickName   string `json:"NickName"`
+	QQNum      int    `json:"QQNum"`
+	Province   string `json:"Province"`
+	City       string `json:"City"`
+	Content    string `json:"Content"`
+	Signature  string `json:"Signature"`
+	Alias      string `json:"Alias"`
+	Scene      int    `json:"Scene"`
+	VerifyFlag int    `json:"VerifyFlag"`
+	AttrStatus int    `json:"AttrStatus"`
+	Sex        int    `json:"Sex"`
+	Ticket     string `json:"Ticket"`
+	OpCode     int    `json:"OpCode"`
+}
+type AppInfo struct {
+	AppID string `json:"AppID"`
+	Type  int    `json:"Type"`
+}
+
+/* I think this should be put into Member ---- Contact struct
+type ModifiedContact struct {
+	UserName          string
+	NickName          string
+	Sex               string
+	HeadImgUpdateFlag int
+	ContactType       int
+	Alias             string
+	ChatRoomOwner     string
+	HeadImgUrl        string
+	ContactFlag       int
+	MemberCount       int
+	MemberList        []Member
+	HideInputBarFlag  int
+	Signature         string
+	VerifyFlag        int
+	RemarkName        string
+	Statues           int
+	AttrStatus        int
+	Province          string
+	City              string
+	SnsFlag           string
+	KeyWor            string
+}
+*/
+
+type UserName struct {
+	Buff string `json:"Buff"`
+}
+
+type NickName struct {
+	Buff string `json:"Buff"`
+}
+
+type BindEmail struct {
+	Buff string `json:"Buff"`
+}
+
+type BindMobile struct {
+	Buff string `json:"Buff"`
+}
+
+type Profile struct {
+	BitFlag           int        `json:"BitFlag"`
+	UserName          UserName   `json:"UserName"`
+	NickName          NickName   `json:"NickName"`
+	BindEmail         BindEmail  `json:"BindEmail"`
+	BindMobile        BindMobile `json:"BindMobile"`
+	Status            int        `json:"Status"`
+	Sex               int        `json:"Sex"`
+	PersonalCard      int        `json:"PersonalCard"`
+	Alias             string     `json:"Alias"`
+	HeadImgUpdateFlag int        `json:"HeadImgUpdateFlag"`
+	HeadImgUrl        string     `json:"HeadImgUrl"`
+	Signature         string     `json:"Signature"`
+}
+
+type MessageSyncResponse struct {
+	BaseResponse           BaseResponse `json:"BaseResponse"`
+	AddMsgCount            int          `json:"AddMsgCount"`
+	AddMsgList             []Message    `json:"AddMsgList"`
+	ModContactCount        int          `json:"ModContactCount"`
+	ModContactList         []Member     `json:"ModContactList"`
+	DelContactCount        int          `json:"DelContactCount"`
+	DelContactList         []Member     `json:"DelContactList"`
+	ModChatRoomMemberCount int          `json:"ModChatRoomMemberCount"`
+	ModChatRoomMemberList  []Member     `json:"ModChatRoomMemberList"`
+	Profile                Profile      `json:"Profile"`
+	ContinueFlag           int          `json:"ContinueFlag"`
+	SyncKey                SyncKey      `json:"SyncKey"`
+	Skey                   string       `json:"Skey"`
+	SyncCheckKey           SyncKey      `json:"SyncCheckKey"`
+}
+
 // GroupContactResponse: get batch contact response struct
 type GetGroupMemberListResponse struct {
-	BaseResponse *BaseResponse
-	Count        int
-	ContactList  []Member
+	BaseResponse *BaseResponse `json:"BaseResponse"`
+	Count        int           `json:"Count"`
+	ContactList  []Member      `json:"ContactList"`
 }
 
 // VerifyUser: verify user request body struct
 type VerifyUser struct {
-	Value            string
-	VerifyUserTicket string
+	Value            string `json:"Value"`
+	VerifyUserTicket string `json:"VerifyUserTicket"`
 }
 
 // ReceivedMessage: for received message
 type ReceivedMessage struct {
-	IsGroup      bool
-	MsgId        string
-	Content      string
-	FromUserName string
-	ToUserName   string
-	Who          string
-	MsgType      int
+	IsGroup      bool   `json:"IsGroup"`
+	MsgId        string `json:"MsgId"`
+	Content      string `json:"Content"`
+	FromUserName string `json:"FromUserName"`
+	ToUserName   string `json:"ToUserName"`
+	Who          string `json:"Who"`
+	MsgType      int    `json:"MsgType"`
 }
-
-type contactResponse struct {
-	Response
-	MemberCount int
-	MemberList  []Member
-	Seq         float64
+type GetContactListResponse struct {
+	BaseResponse BaseResponse `json:"BaseResponse"`
+	MemberCount  int          `json:"MemberCount"`
+	MemberList   []Member     `json:"MemberList"`
+	Seq          float64      `json:"Seq"`
 }
 
 type Response struct {
@@ -226,21 +449,36 @@ type GroupRequest struct {
 	EncryChatRoomId string
 }
 
-type InitResp struct {
-	Response
-	Count               int      `json:"Count"`
-	User                User     `json:"User"`
-	ContactList         []Member `json:"ContactList"`
-	SyncKey             SyncKey  `json:"SyncKey"`
-	ChatSet             string   `json:"ChatSet"`
-	SKey                string   `json:"SKey"`
-	ClientVersion       int      `json:"ClientVersion"`
-	SystemTime          int      `json:"SystemTime"`
-	GrayScale           int      `json:"GrayScale"`
-	InviteStartCount    int      `json:"InviteStartCount"`
-	MPSubscribeMsgCount int      `json:"MPSubscribeMsgCount"`
-	MPSubscribeMsgList  []string `json:"MPSubscribeMsgList"`
-	ClickReportInterval int      `json:"ClickReportInterval"`
+type InitResponse struct {
+	BaseResponse        BaseResponse         `json:"BaseResponse"`
+	Count               int                  `json:"Count"`
+	User                User                 `json:"User"` //This is ourself
+	ContactList         []Member             `json:"ContactList"`
+	SyncKey             SyncKey              `json:"SyncKey"`
+	ChatSet             string               `json:"ChatSet"`
+	SKey                string               `json:"SKey"`
+	ClientVersion       int                  `json:"ClientVersion"`
+	SystemTime          int                  `json:"SystemTime"`
+	GrayScale           int                  `json:"GrayScale"`
+	InviteStartCount    int                  `json:"InviteStartCount"`
+	MPSubscribeMsgCount int                  `json:"MPSubscribeMsgCount"`
+	MPSubscribeMsgList  []MPSubscribeMsgList `json:"MPSubscribeMsgList"`
+	ClickReportInterval int                  `json:"ClickReportInterval"`
+}
+
+type MPArticle struct {
+	Titile string `json:"Titile"`
+	Digest string `json:"Digest"`
+	Cover  string `json:"Cover"`
+	Url    string `json:"Url"`
+}
+
+type MPSubscribeMsgList struct {
+	UserName       string      `json:"UserName"`
+	MPArticleCount int         `json:"MPArticleCount"`
+	MPArticleList  []MPArticle `json:"MPArticleList"`
+	Time           int         `json:"Time"`
+	NickName       string      `json:"NickName"`
 }
 
 type initBaseRequest struct {
@@ -506,6 +744,7 @@ func (wc *wechat) GetBaseRequest() {
 		return
 	}
 
+	wc.SaveToFile("BaseRequestBody.json", data)
 	log.Println(string(data))
 	reader := bytes.NewReader(data)
 	if err = xml.NewDecoder(reader).Decode(wc.BaseRequest); err != nil {
@@ -517,6 +756,13 @@ func (wc *wechat) GetBaseRequest() {
 		log.Println("login failed message: ", wc.BaseRequest.Message)
 		return
 	}
+
+	br, err := json.Marshal(wc.BaseRequest)
+	if err != nil {
+		log.Println("Unable to encode BaseRequest: ", err.Error())
+		return
+	}
+	wc.SaveToFile("BaseRequest.json", br)
 
 	log.Printf("%q", wc.BaseRequest)
 	log.Println("++++++++++++++++++++++++++++++++++++++++++")
@@ -573,10 +819,6 @@ func (wc *wechat) WeChatInit() {
 	}
 	defer resp.Body.Close()
 
-	log.Println("+=================================+")
-	log.Println(resp.Status)
-	log.Println(resp.StatusCode)
-
 	log.Println("Cookies: ", resp.Cookies())
 
 	data, e := ioutil.ReadAll(resp.Body)
@@ -588,8 +830,10 @@ func (wc *wechat) WeChatInit() {
 	//Pay more attention to here
 	log.Println(string(data))
 	reader := bytes.NewReader(data)
+	log.Println("========================================================")
+	wc.SaveToFile("InitRespBody.json", data)
 
-	var result InitResp
+	var result InitResponse
 	if err = json.NewDecoder(reader).Decode(&result); err != nil {
 		log.Println("Error happened when decode init information: ", err.Error())
 		return
@@ -601,6 +845,8 @@ func (wc *wechat) WeChatInit() {
 	save, _ := json.Marshal(result)
 	wc.SaveToFile("InitResp.json", save)
 	wc.SyncKey = &result.SyncKey
+	wc.UserName = result.User.UserName
+	wc.NickName = result.User.NickName
 	return
 }
 
@@ -651,10 +897,6 @@ func (wc *wechat) GetContactList() {
 	}
 	defer resp.Body.Close()
 
-	log.Println("+=================================+")
-	log.Println(resp.Status)
-	log.Println(resp.StatusCode)
-
 	log.Println("Cookies: ", resp.Cookies())
 
 	data, e := ioutil.ReadAll(resp.Body)
@@ -663,20 +905,25 @@ func (wc *wechat) GetContactList() {
 		return
 	}
 
+	wc.SaveToFile("GetContactRespBody.json", data)
 	//Pay more attention to here
-	log.Println(string(data))
+	//log.Println(string(data))
 	reader := bytes.NewReader(data)
-	var crsp contactResponse
+	var crsp GetContactListResponse
 	if err = json.NewDecoder(reader).Decode(&crsp); err != nil {
 		log.Println("Error happened when decode init information: ", err.Error())
 		return
 	}
 
+	wc.ContactDB = make(map[string]Member, len(crsp.MemberList))
 	for _, c := range crsp.MemberList {
 		if strings.HasPrefix(c.UserName, "@@") {
-			wc.GroupList = append(wc.GroupList, &c)
+			wc.GroupList = append(wc.GroupList, c)
 		}
+		log.Println("Get new contact: ", c.NickName, " -> ", c.UserName)
+		wc.ContactDB[c.NickName] = c
 	}
+
 	save, _ := json.Marshal(crsp)
 	//log.Println(crsp)
 	wc.SaveToFile("GetContactResp.json", save)
@@ -814,6 +1061,7 @@ func (wc *wechat) SyncCheck() {
 	log.Println(resp.Cookies())
 }
 
+//@liwei: 这里并不是随机的，目前感觉只要更所有的一般性请求使用相同的域名就可以了。
 func (wc *wechat) GetSyncServer() bool {
 	servers := [...]string{
 		`webpush.wx.qq.com`,
@@ -936,7 +1184,20 @@ func (wc *wechat) MessageSync() {
 		defer resp.Body.Close()
 		body, _ := ioutil.ReadAll(resp.Body)
 		log.Println(string(body))
-		wc.SaveToFile("ReceivedMessage.json", body)
+		wc.SaveToFile("MessageSyncResponseBody.json", body)
+
+		reader := bytes.NewReader(body)
+		var ms MessageSyncResponse
+		if err = json.NewDecoder(reader).Decode(&ms); err != nil {
+			log.Println("Error happened when decode Response information: ", err.Error())
+			return
+		}
+
+		log.Println(ms)
+		save, _ := json.Marshal(ms)
+		wc.SaveToFile("MessageSyncResponse.json", save)
+		log.Println(resp.Cookies())
+		//wc.SaveToFile("Cookies", resp.Cookies())
 	}
 }
 
@@ -1010,6 +1271,262 @@ func (wc *wechat) SaveToFile(name string, content []byte) {
 	file.Write(content)
 }
 
+/*
+
+| API | webwxstatusnotify |
+| --- | --------- |
+| url | https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxstatusnotify?lang=zh_CN&pass_ticket=xxx |
+| method | POST |
+| data | JSON |
+| header | ContentType: application/json; charset=UTF-8 |
+| params | {
+    BaseRequest: {
+	Uin: xxx,
+	Sid: xxx,
+	Skey: xxx,
+	DeviceID: xxx
+    },
+    Code: 3,
+    FromUserName: `自己ID`,
+    ToUserName: `自己ID`,
+    ClientMsgId: `时间戳` <br> }
+*/
+
+func (wc *wechat) StatusNotify() {
+	params := url.Values{}
+	params.Add("lang", wc.Lang)
+	params.Add("pass_ticket", wc.BaseRequest.PassTicket)
+
+	uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxstatusnotify?" + params.Encode()
+
+	data, err := json.Marshal(CommonReqBody{
+		BaseRequest:  wc.BaseRequest,
+		Code:         3,
+		FromUserName: wc.UserName,
+		ToUserName:   wc.UserName,
+		ClientMsgId:  int(time.Now().Unix()) + 1,
+	})
+	if err != nil {
+		log.Println("Error happend when marshal: ", err.Error())
+		return
+	}
+
+	req, err := http.NewRequest("POST", uri, bytes.NewReader(data))
+	if err != nil {
+		log.Println("Error happend when create http request: ", err.Error())
+		return
+	}
+	req.Header.Add("Content-Type", "application/json; charset=UTF-8")
+	req.Header.Add("User-Agent", wc.userAgent)
+
+	resp, err := wc.client.Do(req)
+	if err != nil {
+		log.Println("Error happend when do request: ", err.Error())
+		return
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	//log.Println(string(body))
+	wc.SaveToFile("StatusNotifyBody.json", body)
+
+	reader := bytes.NewReader(body)
+	var sn StatusNotifyResponse
+	if err = json.NewDecoder(reader).Decode(&sn); err != nil {
+		log.Println("Error happened when decode Response information: ", err.Error())
+		return
+	}
+
+	save, _ := json.Marshal(sn)
+	wc.SaveToFile("StatusNotify.json", save)
+	log.Println(sn)
+
+}
+
+/*
+
+| API | webwxsendmsg |
+| --- | ------------ |
+| url | https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?pass_ticket=xxx |
+| method | POST |
+| data | JSON |
+| header | ContentType: application/json; charset=UTF-8 |
+| params |
+	{
+    		BaseRequest: {
+			Uin: xxx,
+			Sid: xxx,
+			Skey: xxx,
+			DeviceID: xxx
+		},
+		Msg: {
+			Type: 1 `文字消息`,
+			Content: `要发送的消息`,
+			FromUserName: `自己ID`,
+			ToUserName: `好友ID`,
+			LocalID: `与clientMsgId相同`,
+			ClientMsgId: `时间戳左移4位随后补上4位随机数`
+		}
+	}
+*/
+
+func (wc *wechat) SendTextMessage() {
+	params := url.Values{}
+	params.Add("pass_ticket", wc.BaseRequest.PassTicket)
+
+	uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?" + params.Encode()
+
+	data, err := json.Marshal(CommonReqBody{
+		BaseRequest: wc.BaseRequest,
+		Msg: TextMessage{
+			Type:         1,
+			Content:      "Hello world",
+			FromUserName: wc.UserName,
+			ToUserName:   wc.ContactDB["cp4"].UserName,
+			LocalID:      int(time.Now().Unix() * 1e4),
+			ClientMsgId:  int(time.Now().Unix() * 1e4),
+		},
+	})
+
+	log.Println(wc.ContactDB)
+	log.Println("Sending message from: ", wc.UserName, " to ", wc.ContactDB["cp4"].UserName)
+	if err != nil {
+		log.Println("Error happend when marshal: ", err.Error())
+		return
+	}
+
+	req, err := http.NewRequest("POST", uri, bytes.NewReader(data))
+	if err != nil {
+		log.Println("Error happend when create http request: ", err.Error())
+		return
+	}
+	req.Header.Add("Content-Type", "application/json; charset=UTF-8")
+	req.Header.Add("User-Agent", wc.userAgent)
+
+	resp, err := wc.client.Do(req)
+	if err != nil {
+		log.Println("Error happend when do request: ", err.Error())
+		return
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	//log.Println(string(body))
+	wc.SaveToFile("SendTextMessageResponseBody.json", body)
+}
+
+/*
+| API | webwxsendmsgemotion |
+| --- | ------------ |
+| url | https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsendemoticon?fun=sys&f=json&pass_ticket=xxx |
+| method | POST |
+| data | JSON |
+| header | ContentType: application/json; charset=UTF-8 |
+| params | {
+    		BaseRequest: {
+		    Uin: xxx,
+		    Sid: xxx,
+		    Skey: xxx,
+		    DeviceID: xxx
+		},
+		Msg: {
+		    Type: 47 `emoji消息`,
+		    EmojiFlag: 2,
+		    MediaId: `表情上传后的媒体ID`,
+		    FromUserName: `自己ID`,
+		    ToUserName: `好友ID`,
+		    LocalID: `与clientMsgId相同`,
+		    ClientMsgId: `时间戳左移4位随后补上4位随机数`
+		}
+	  }
+*/
+func (wc *wechat) SendEmotionMessage() {
+
+}
+
+/*
+| API | webwxrevokemsg |
+| --- | ------------ |
+| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxrevokemsg |
+| method | POST |
+| data | JSON |
+| header | ContentType: application/json; charset=UTF-8 |
+| params | {
+    	BaseRequest: {
+	    Uin: xxx,
+	    Sid: xxx,
+	    Skey: xxx,
+	    DeviceID: xxx
+	},
+	SvrMsgId: msg_id,
+	ToUserName: user_id,
+	ClientMsgId: local_msg_id
+    }
+*/
+func (wc *wechat) RevokeMessage() {
+
+}
+
+/*
+### 图片接口
+
+| API | webwxgeticon |
+| --- | ------------ |
+| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxgeticon |
+| method | GET |
+| params | **seq**: `数字，可为空` <br> **username**: `ID` <br> **skey**: xxx |
+<br>
+
+| API | webwxgetheadimg |
+| --- | --------------- |
+| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxgetheadimg |
+| method | GET |
+| params | **seq**: `数字，可为空` <br> **username**: `群ID` <br> **skey**: xxx |
+<br>
+
+| API | webwxgetmsgimg |
+| --- | --------------- |
+| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxgetmsgimg |
+| method | GET |
+| params | **MsgID**: `消息ID` <br> **type**: slave `略缩图` or `为空时加载原图` <br> **skey**: xxx |
+<br>
+
+
+*/
+
+/*
+### 多媒体接口
+
+| API | webwxgetvideo |
+| --- | --------------- |
+| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxgetvideo |
+| method | GET |
+| params | **msgid**: `消息ID` <br> **skey**: xxx |
+<br>
+
+| API | webwxgetvoice |
+| --- | --------------- |
+| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxgetvoice |
+| method | GET |
+| params | **msgid**: `消息ID` <br> **skey**: xxx |
+<br>
+
+"https://file.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json"
+
+'/webwxverifyuser?lang=zh_CN&r=%s&pass_ticket=%s', time() * 1000, server()->passTicket);
+        $data = [
+            'BaseRequest'        => server()->baseRequest,
+            'Opcode'             => $code,
+            'VerifyUserListSize' => 1,
+            'VerifyUserList'     => [$ticket ?: $this->verifyTicket()],
+            'VerifyContent'      => '',
+            'SceneListCount'     => 1,
+            'SceneList'          => [33],
+            'skey'               => server()->skey,
+        ];
+
+*/
+
 func main() {
 	wc := &wechat{
 		client: &http.Client{
@@ -1021,19 +1538,289 @@ func main() {
 		BaseRequest: &BaseRequest{},
 		DeviceID:    "0x1234567890",
 		userAgent:   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36",
-		GroupList:   make([]*Member, 0, 10),
+		GroupList:   make([]Member, 0, 10),
 	}
 	wc.GetUUID()
 	wc.GetQRCode()
 	go wc.WaitForQRCodeScan()
 	wc.GetBaseRequest()
 	wc.WeChatInit()
+	wc.StatusNotify()
 	wc.GetContactList()
 	wc.GetGroupMemberList()
 	// wc.GetSyncServer()
+	wc.SendTextMessage()
 	wc.MessageSync()
 }
 
 func init() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 }
+
+/*
+
+| MsgType | 说明 |
+| ------- | --- |
+| 1  | 文本消息 |
+| 3  | 图片消息 |
+| 34 | 语音消息 |
+| 37 | 好友确认消息 |
+| 40 | POSSIBLEFRIEND_MSG |
+| 42 | 共享名片 |
+| 43 | 视频消息 |
+| 47 | 动画表情 |
+| 48 | 位置消息 |
+| 49 | 分享链接 |
+| 50 | VOIPMSG |
+| 51 | 微信初始化消息 |
+| 52 | VOIPNOTIFY |
+| 53 | VOIPINVITE |
+| 62 | 小视频 |
+| 9999 | SYSNOTICE |
+| 10000 | 系统消息 |
+| 10002 | 撤回消息 |
+
+
+**微信初始化消息**
+```html
+MsgType: 51
+FromUserName: 自己ID
+ToUserName: 自己ID
+StatusNotifyUserName: 最近联系的联系人ID
+Content:
+	<msg>
+	    <op id='4'>
+	        <username>
+	        	// 最近联系的联系人
+	            filehelper,xxx@chatroom,wxid_xxx,xxx,...
+	        </username>
+	        <unreadchatlist>
+	            <chat>
+	                <username>
+	                	// 朋友圈
+	                    MomentsUnreadMsgStatus
+	                </username>
+	                <lastreadtime>
+	                    1454502365
+	                </lastreadtime>
+	            </chat>
+	        </unreadchatlist>
+	        <unreadfunctionlist>
+	        	// 未读的功能账号消息，群发助手，漂流瓶等
+	        </unreadfunctionlist>
+	    </op>
+	</msg>
+```
+
+**文本消息**
+```
+MsgType: 1
+FromUserName: 发送方ID
+ToUserName: 接收方ID
+Content: 消息内容
+```
+
+**图片消息**
+```html
+MsgType: 3
+FromUserName: 发送方ID
+ToUserName: 接收方ID
+MsgId: 用于获取图片
+Content:
+	<msg>
+		<img length="6503" hdlength="0" />
+		<commenturl></commenturl>
+	</msg>
+```
+
+**小视频消息**
+```html
+MsgType: 62
+FromUserName: 发送方ID
+ToUserName: 接收方ID
+MsgId: 用于获取小视频
+Content:
+	<msg>
+		<img length="6503" hdlength="0" />
+		<commenturl></commenturl>
+	</msg>
+```
+
+**地理位置消息**
+```
+MsgType: 1
+FromUserName: 发送方ID
+ToUserName: 接收方ID
+Content: http://weixin.qq.com/cgi-bin/redirectforward?args=xxx
+// 属于文本消息，只不过内容是一个跳转到地图的链接
+```
+
+**名片消息**
+```js
+MsgType: 42
+FromUserName: 发送方ID
+ToUserName: 接收方ID
+Content:
+	<?xml version="1.0"?>
+	<msg bigheadimgurl="" smallheadimgurl="" username="" nickname=""  shortpy="" alias="" imagestatus="3" scene="17" province="" city="" sign="" sex="1" certflag="0" certinfo="" brandIconUrl="" brandHomeUrl="" brandSubscriptConfigUrl="" brandFlags="0" regionCode="" />
+
+RecommendInfo:
+	{
+		"UserName": "xxx", // ID
+		"Province": "xxx",
+		"City": "xxx",
+		"Scene": 17,
+		"QQNum": 0,
+		"Content": "",
+		"Alias": "xxx", // 微信号
+		"OpCode": 0,
+		"Signature": "",
+		"Ticket": "",
+		"Sex": 0, // 1:男, 2:女
+		"NickName": "xxx", // 昵称
+		"AttrStatus": 4293221,
+		"VerifyFlag": 0
+	}
+```
+
+**语音消息**
+```html
+MsgType: 34
+FromUserName: 发送方ID
+ToUserName: 接收方ID
+MsgId: 用于获取语音
+Content:
+	<msg>
+		<voicemsg endflag="1" cancelflag="0" forwardflag="0" voiceformat="4" voicelength="1580" length="2026" bufid="216825389722501519" clientmsgid="49efec63a9774a65a932a4e5fcd4e923filehelper174_1454602489" fromusername="" />
+	</msg>
+```
+
+**动画表情**
+```html
+MsgType: 47
+FromUserName: 发送方ID
+ToUserName: 接收方ID
+Content:
+	<msg>
+		<emoji fromusername = "" tousername = "" type="2" idbuffer="media:0_0" md5="e68363487d8f0519c4e1047de403b2e7" len = "86235" productid="com.tencent.xin.emoticon.bilibili" androidmd5="e68363487d8f0519c4e1047de403b2e7" androidlen="86235" s60v3md5 = "e68363487d8f0519c4e1047de403b2e7" s60v3len="86235" s60v5md5 = "e68363487d8f0519c4e1047de403b2e7" s60v5len="86235" cdnurl = "http://emoji.qpic.cn/wx_emoji/eFygWtxcoMF8M0oCCsksMA0gplXAFQNpiaqsmOicbXl1OC4Tyx18SGsQ/" designerid = "" thumburl = "http://mmbiz.qpic.cn/mmemoticon/dx4Y70y9XctRJf6tKsy7FwWosxd4DAtItSfhKS0Czr56A70p8U5O8g/0" encrypturl = "http://emoji.qpic.cn/wx_emoji/UyYVK8GMlq5VnJ56a4GkKHAiaC266Y0me0KtW6JN2FAZcXiaFKccRevA/" aeskey= "a911cc2ec96ddb781b5ca85d24143642" ></emoji>
+		<gameext type="0" content="0" ></gameext>
+	</msg>
+```
+
+**普通链接或应用分享消息**
+```html
+MsgType: 49
+AppMsgType: 5
+FromUserName: 发送方ID
+ToUserName: 接收方ID
+Url: 链接地址
+FileName: 链接标题
+Content:
+	<msg>
+		<appmsg appid=""  sdkver="0">
+			<title></title>
+			<des></des>
+			<type>5</type>
+			<content></content>
+			<url></url>
+			<thumburl></thumburl>
+			...
+		</appmsg>
+		<appinfo>
+			<version></version>
+			<appname></appname>
+		</appinfo>
+	</msg>
+```
+
+**音乐链接消息**
+```html
+MsgType: 49
+AppMsgType: 3
+FromUserName: 发送方ID
+ToUserName: 接收方ID
+Url: 链接地址
+FileName: 音乐名
+
+AppInfo: // 分享链接的应用
+	{
+		Type: 0,
+		AppID: wx485a97c844086dc9
+	}
+
+Content:
+	<msg>
+		<appmsg appid="wx485a97c844086dc9"  sdkver="0">
+			<title></title>
+			<des></des>
+			<action></action>
+			<type>3</type>
+			<showtype>0</showtype>
+			<mediatagname></mediatagname>
+			<messageext></messageext>
+			<messageaction></messageaction>
+			<content></content>
+			<contentattr>0</contentattr>
+			<url></url>
+			<lowurl></lowurl>
+			<dataurl>
+				http://ws.stream.qqmusic.qq.com/C100003i9hMt1bgui0.m4a?vkey=6867EF99F3684&amp;guid=ffffffffc104ea2964a111cf3ff3edaf&amp;fromtag=46
+			</dataurl>
+			<lowdataurl>
+				http://ws.stream.qqmusic.qq.com/C100003i9hMt1bgui0.m4a?vkey=6867EF99F3684&amp;guid=ffffffffc104ea2964a111cf3ff3edaf&amp;fromtag=46
+			</lowdataurl>
+			<appattach>
+				<totallen>0</totallen>
+				<attachid></attachid>
+				<emoticonmd5></emoticonmd5>
+				<fileext></fileext>
+			</appattach>
+			<extinfo></extinfo>
+			<sourceusername></sourceusername>
+			<sourcedisplayname></sourcedisplayname>
+			<commenturl></commenturl>
+			<thumburl>
+				http://imgcache.qq.com/music/photo/album/63/180_albumpic_143163_0.jpg
+			</thumburl>
+			<md5></md5>
+		</appmsg>
+		<fromusername></fromusername>
+		<scene>0</scene>
+		<appinfo>
+			<version>29</version>
+			<appname>摇一摇搜歌</appname>
+		</appinfo>
+		<commenturl></commenturl>
+	</msg>
+```
+
+**群消息**
+```
+MsgType: 1
+FromUserName: @@xxx
+ToUserName: @xxx
+Content:
+	@xxx:<br/>xxx
+```
+
+**红包消息**
+```
+MsgType: 49
+AppMsgType: 2001
+FromUserName: 发送方ID
+ToUserName: 接收方ID
+Content: 未知
+```
+注：根据网页版的代码可以看到未来可能支持查看红包消息，但目前走的是系统消息，见下。
+
+**系统消息**
+```
+MsgType: 10000
+FromUserName: 发送方ID
+ToUserName: 自己ID
+Content:
+	"你已添加了 xxx ，现在可以开始聊天了。"
+	"如果陌生人主动添加你为朋友，请谨慎核实对方身份。"
+	"收到红包，请在手机上查看"
+
+*/
