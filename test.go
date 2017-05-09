@@ -12,6 +12,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/cookiejar"
+	//"net/http/httputil"
 	"net/url"
 	"os"
 	"regexp"
@@ -20,25 +22,44 @@ import (
 	"time"
 )
 
+//- 微信目前分为2个版本，所以在获取接口时候请求的路径也不一样，
+//	很早以前注册的用户请求地址一般为wx.qq.com，
+//	新注册用户为wx2.qq.com，
+//  导致很多开发者在开发微信网页版的时候返现有些用户能登录并获取到消息，有的只能登录不能获取到消息
+//  微信返回码RetCode和相应的解决方案：0－正常；1－失败，refresh；1101/1100－登出/失败，refresh/重新登录；1203－恭喜您，几个小时后重试，没有解决方案；Selector：2－新消息，6/7－进入/离开聊天界面通常是在手机上进行操作，重新初始化即可，0－正常
 type wechat struct {
 	client      *http.Client
+	cacheName   string
+	userAgent   string
 	uuid        string
 	Redirect    string
 	UUID        string
-	Ticket      string
-	Lang        string
 	Scan        string
-	Login       chan bool
-	BaseURL     string
-	BaseRequest *BaseRequest
-	DeviceID    string
-	userAgent   string
-	GroupList   []Member
-	SyncServer  string
-	SyncKey     *SyncKey
-	UserName    string
-	NickName    string
-	ContactDB   map[string]Member
+	login       chan bool
+	Ticket      string            `json:"Ticket"`
+	Lang        string            `json:"Lang"`
+	BaseURL     string            `json:"BaseURL"`
+	BaseRequest *BaseRequest      `json:"BaseRequest"`
+	DeviceID    string            `json:"DeviceID"`
+	GroupList   []Member          `json:"GroupList"`
+	SyncServer  string            `json:"SyncServer"`
+	SyncKey     *SyncKey          `json:"SyncKey"`
+	UserName    string            `json:"UserName"`
+	NickName    string            `json:"NickName"`
+	ContactDB   map[string]Member `json:"ContactDB"`
+	Cookies     []*http.Cookie    `json:"Cookies"`
+}
+
+type Cache struct {
+	BaseResponse *BaseResponse  `json:"BaseResponse"`
+	DeviceID     string         `json:"DeviceID"`
+	SyncKey      *SyncKey       `json:"SyncKey"`
+	UserName     string         `json:"UserName"`
+	NickName     string         `json:"NickName"`
+	SyncServer   string         `json:"SyncServer"`
+	Ticket       string         `json:"Ticket"`
+	Lang         string         `json:"Lang"`
+	Cookies      []*http.Cookie `json:"Cookies"`
 }
 
 type StatusNotifyResponse struct {
@@ -496,6 +517,33 @@ var FetchTicket = regexp.MustCompile(`ticket=(?P<ticket>[[:word:]_\$@#\?\-=]+)&u
 
 var FetchRedirectLink = regexp.MustCompile(`window.redirect_uri=\"(?P<redirect>[[:word:]=_\.\?@#&\-+%/\:]+)\"`)
 
+func (wc *wechat) FastLogin() error {
+	_, err := os.Stat(wc.cacheName)
+	if os.IsNotExist(err) {
+		log.Println("Cache not exist, log from scratch")
+		return errors.New("Cache not exist")
+	}
+
+	data, err := ioutil.ReadFile(wc.cacheName)
+	if err != nil {
+		log.Println("Cannot read cache file: ", err.Error())
+		return errors.New("Cannot read cache file")
+	}
+
+	err = json.Unmarshal(data, wc)
+	if err != nil {
+		log.Println("Cannot decode cache info: ", err.Error())
+		return errors.New("Cannot decode cache")
+	}
+
+	u, ue := url.Parse(wc.BaseURL)
+	if ue != nil {
+		return errors.New("Cannot parse base url")
+	}
+	log.Println(wc)
+	wc.client.Jar.SetCookies(u, wc.Cookies)
+	return nil
+}
 func (wc *wechat) GetUUID() error {
 
 	//wxeb7ec651dd0aefa9
@@ -695,7 +743,7 @@ func (wc *wechat) WaitForQRCodeScan() {
 			wc.Lang = fields[3]
 			wc.Scan = fields[4]
 			log.Println(wc)
-			wc.Login <- true
+			wc.login <- true
 			break
 		} else {
 			if code == "201" {
@@ -730,7 +778,6 @@ func (wc *wechat) WaitForQRCodeScan() {
 </error>
 */
 func (wc *wechat) GetBaseRequest() {
-	<-wc.Login
 	resp, err := wc.client.Get(wc.Redirect + "&fun=new")
 	if err != nil {
 		log.Println("Cannot get redirect link: ", err.Error())
@@ -928,6 +975,10 @@ func (wc *wechat) GetContactList() {
 	//log.Println(crsp)
 	wc.SaveToFile("GetContactResp.json", save)
 	log.Println(resp.Cookies())
+
+	//I try to build a cache for fast login without QR code
+	cache, _ := json.Marshal(wc)
+	wc.SaveToFile("Cache.json", cache)
 }
 
 /*
@@ -1008,6 +1059,9 @@ func (wc *wechat) GetGroupMemberList() {
 	save, _ := json.Marshal(crsp)
 	wc.SaveToFile("GetAllGroupMemberResp.json", save)
 	log.Println(resp.Cookies())
+
+	cache, _ := json.Marshal(wc)
+	wc.SaveToFile("Cache.json", cache)
 }
 
 /*
@@ -1032,33 +1086,41 @@ selector:
 	2 新的消息
 	7 进入/离开聊天界面
 
+//心跳函数
 */
 func (wc *wechat) SyncCheck() {
-	params := url.Values{}
-	params.Add("r", strconv.FormatInt(time.Now().Unix()*1000, 10))
-	params.Add("sid", wc.BaseRequest.Wxsid)
-	params.Add("uin", wc.BaseRequest.Wxuin)
-	params.Add("skey", wc.BaseRequest.Skey)
-	params.Add("deviceid", wc.DeviceID)
-	params.Add("synckey", wc.SyncKey.String())
-	params.Add("_", strconv.FormatInt(time.Now().Unix()*1000, 10))
+	tick := time.Tick(time.Second * 5)
+	for {
+		<-tick
+		params := url.Values{}
+		params.Add("r", strconv.FormatInt(time.Now().Unix()*1000, 10))
+		params.Add("sid", wc.BaseRequest.Wxsid)
+		params.Add("uin", wc.BaseRequest.Wxuin)
+		params.Add("skey", wc.BaseRequest.Skey)
+		params.Add("deviceid", wc.DeviceID)
+		params.Add("synckey", wc.SyncKey.String())
+		params.Add("_", strconv.FormatInt(time.Now().Unix()*1000, 10))
 
-	uri := "https://" + wc.SyncServer + "/cgi-bin/mmwebwx-bin/synccheck?" + params.Encode()
-	resp, err := wc.client.Get(uri)
-	if err != nil {
-		log.Println("Failed to Sync for server: ", uri, " with error: ", err.Error())
-		return
+		uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/synccheck?" + params.Encode()
+		resp, err := wc.client.Get(uri)
+		if err != nil {
+			log.Println("Failed to Sync for server: ", uri, " with error: ", err.Error())
+			return
+		}
+		defer resp.Body.Close()
+
+		data, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Println("Failed to Read body for server: ", uri, " with error: ", err.Error())
+			return
+		}
+
+		log.Println("++++++++++++++++++++++++++++++++++++++++++++++++")
+		log.Println(string(data))
+		log.Println(resp.Cookies())
+		wc.SaveToFile("SyncCheckResponse.txt", data)
+		log.Println("++++++++++++++++++++++++++++++++++++++++++++++++")
 	}
-	defer resp.Body.Close()
-
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Println("Failed to Read body for server: ", uri, " with error: ", err.Error())
-		return
-	}
-
-	log.Println(string(data))
-	log.Println(resp.Cookies())
 }
 
 //@liwei: 这里并不是随机的，目前感觉只要更所有的一般性请求使用相同的域名就可以了。
@@ -1190,14 +1252,23 @@ func (wc *wechat) MessageSync() {
 		var ms MessageSyncResponse
 		if err = json.NewDecoder(reader).Decode(&ms); err != nil {
 			log.Println("Error happened when decode Response information: ", err.Error())
-			return
+			continue
 		}
 
 		log.Println(ms)
 		save, _ := json.Marshal(ms)
 		wc.SaveToFile("MessageSyncResponse.json", save)
-		log.Println(resp.Cookies())
-		//wc.SaveToFile("Cookies", resp.Cookies())
+
+		wc.Cookies = resp.Cookies()
+		cookie, err := json.Marshal(wc.Cookies)
+		if err != nil {
+			log.Println("Unable to encoding cookies: ", err.Error())
+			continue
+		}
+		wc.SaveToFile("Cookies.json", cookie)
+
+		cache, _ := json.Marshal(wc)
+		wc.SaveToFile("Cache.json", cache)
 	}
 }
 
@@ -1528,23 +1599,35 @@ func (wc *wechat) RevokeMessage() {
 */
 
 func main() {
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		return
+	}
+
 	wc := &wechat{
 		client: &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 			},
+			Jar: jar,
 		},
-		Login:       make(chan bool),
+		login:       make(chan bool),
+		cacheName:   "Cache.json",
 		BaseRequest: &BaseRequest{},
 		DeviceID:    "0x1234567890",
 		userAgent:   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36",
 		GroupList:   make([]Member, 0, 10),
+		BaseURL:     "https://wx2.qq.com/cgi-bin/mmwebwx-bin/",
 	}
-	wc.GetUUID()
-	wc.GetQRCode()
-	go wc.WaitForQRCodeScan()
+	if err := wc.FastLogin(); err != nil {
+		wc.GetUUID()
+		wc.GetQRCode()
+		go wc.WaitForQRCodeScan()
+		<-wc.login
+	}
 	wc.GetBaseRequest()
 	wc.WeChatInit()
+	go wc.SyncCheck()
 	wc.StatusNotify()
 	wc.GetContactList()
 	wc.GetGroupMemberList()

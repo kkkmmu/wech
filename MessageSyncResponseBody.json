@@ -4,16 +4,16 @@
 "ErrMsg": ""
 }
 ,
-"AddMsgCount": 4,
+"AddMsgCount": 1,
 "AddMsgList": [{
-"MsgId": "6874671899149897933",
-"FromUserName": "@cbbe6f5ef566e5905cf42c6fc42d652eb8d30718658ccc7e32483ea502a0e01e",
-"ToUserName": "@cbbe6f5ef566e5905cf42c6fc42d652eb8d30718658ccc7e32483ea502a0e01e",
+"MsgId": "6068562069095094795",
+"FromUserName": "@f00d6e04c096bca8cd476d393bf5433110aa9d6ba04b88c68effb54d779ab131",
+"ToUserName": "@f00d6e04c096bca8cd476d393bf5433110aa9d6ba04b88c68effb54d779ab131",
 "MsgType": 51,
 "Content": "",
 "Status": 3,
 "ImgStatus": 1,
-"CreateTime": 1494341761,
+"CreateTime": 1494349813,
 "VoiceLength": 0,
 "PlayLength": 0,
 "FileName": "",
@@ -22,7 +22,7 @@
 "Url": "",
 "AppMsgType": 0,
 "StatusNotifyCode": 4,
-"StatusNotifyUserName": "filehelper,@41a102cb15e7db206552d27e225cee9c,@ef82faddc6296abd62e5bf95a5b5d9fe,@056aabfeef790fdb8d04653d610736596cc10b73ca4a8cbcc0c203f30fabf355,@@7be4654ef7170240e172e1072ce59b8ddf95c0839eef52a944be4e70218120cb,newsapp,@d72df95810635c49d3ced052ca33e51fee9e790d61ee4a64a42e909162f2204b,@255ce693d2f3c5ff044416d62590fdf7,@a15ea698192d475d55172273eb078e35d7b2ca8ff23efe34e03698923f2fa608,@0337fb2b680a51bd4e1fbbd250ec70f60703ed19d6b19f5dd14916dcaa6bf953,@30e05ddeb888d407ba0c1af1fb62d907,@1805eae91a807e38471fa11badc5fc5a76778440f8438c5da401ff2b4beca4a1,@77f5feef514f7df8ad951c5bf7597c549e2985cfa43cac0a43289774c1053d75,@a8f2846a495029181f50e408e0e5bc114a9618708a881e81f0e7b098bd57b1f2,@2abf90e2896564bc3661a4abc04a66ce,@08e373d2c095361a41d95af351f7740e62fe4024f7c843093e3381ba4fa1ff2f,@381dcd0dc44615bae4d9175bb79d64bd3cd808cee47a2eeb204b99490fc65f91,@68b795d7568cd675fe89e7426ff1b8118f06a6ecc9ead3d91e47cea597e09582,@4ca29622649d355416f394f340332c6a4012db0d5da1a4535e170342e3cb133182bf97d565ed9beab45e102ce6c6ad878bf24c0441ce71c79f14f9d1c87e8882f41b7304e157c5ab97a609b7dae2d26989d3db0fa091cdb15e16cbd2216bdd0a0f4cfa0d4da0308f672e6b9f2f84d478,@dab78af36de2f213da8e5b995bde58664bfcfe90ea7ade82a0daf3cc29963dd2,@c3bc8b169a63b232cdeb5df0ecd993cd81d9cce911a444dc0e9971261d033251,@af5c6ec9e9243913ec7f73250a72a9cbd2abb2976c0345605a52ebcd09a45dd4,weixin",
+"StatusNotifyUserName": "@4046ed40f763eba8646939ab001e677f,filehelper,@4892872eabab85a21c3e01b3a94df6f3,@135f4d5521f600d05182a2ffd999e8f08632a3763c1a0f6bd4d1e1aa730dedaf,@@59e9a11c5254ecb158e246244a62805d6c6f64a6a16b8be8db90cd2ab02318eb,newsapp,@1a3c9ad6dab887da49a7e44ba97f31cc44c1fee8b12c979bf9cbd03960966107,@f731f996139d900b0b4452215c56e0fb,@77c323296fffe03c0def76d2e869f781057f96d5ae21139d73f5caf352d19703,@30865f6fbdd2a8fc9bf687a283e713e6e18b6dccc0aa1d0dcb82d67bceedf61f,@b41b5044558420090f0b81a70a922c71,@6a33cd45e0fa20a1b29363668307a0aea7e6cf0aad24c1083f2f843832a16341,@b4cf74fc30d1ab2b4b06de0ed289a8d2d2544f3127ca106f12c676debfdc093c,@84c5ce9872d6b6572a0ac4378e9a8b26216ee4d3ebdd2be697b8af1d4e256fad,@bb635f715690f3cc2274da5bd1de1f34,@be8b812dc64023c639d4de92657fada0c6e90ec68fb33d7ffc86863b6d26b4fc,@c026c0a6fd46c1c882586ef8c46683c7e001de353e399ec18a63fbcda2f270ee,@165aa10aa96e8022863060472c1a3237fe6ed1ce5d10776aeb0d2e5a1d71651d,@9534ee26db8f04985b32ac8767e16823722e01a2bd28dd13f812236260886ec7acc937dfb505cfc8c3f2ab36f23c1dba8f86b6b47b0b96cd4b8b2f4d2f498ef360a0664dfdb38eb698e5fab19c28c40315ffdee503e4e914a3cdbe7460c2b4a26bbd0e03e9e966d3b4b9055ae8af860f,@70df73297293960123475069f251735477d7ed15bf659b024b4747faca7fb388,@2a846b19fc4e05a913fc8266acd00a23ce0a15e7ae0023a9856b3ea139a0bb97,@135c22bca726f89ae31dc0e9662318e0ac1a1d5d00bb0f119df917995e1bcac4,weixin",
 "RecommendInfo": {
 "UserName": "",
 "NickName": "",
@@ -51,172 +51,25 @@
 "ImgHeight": 0,
 "ImgWidth": 0,
 "SubMsgType": 0,
-"NewMsgId": 6874671899149897933,
-"OriContent": ""
-}
-,{
-"MsgId": "2997611779858438986",
-"FromUserName": "@41a102cb15e7db206552d27e225cee9c",
-"ToUserName": "@cbbe6f5ef566e5905cf42c6fc42d652eb8d30718658ccc7e32483ea502a0e01e",
-"MsgType": 1,
-"Content": "和啦啦啦",
-"Status": 3,
-"ImgStatus": 1,
-"CreateTime": 1494341793,
-"VoiceLength": 0,
-"PlayLength": 0,
-"FileName": "",
-"FileSize": "",
-"MediaId": "",
-"Url": "",
-"AppMsgType": 0,
-"StatusNotifyCode": 0,
-"StatusNotifyUserName": "",
-"RecommendInfo": {
-"UserName": "",
-"NickName": "",
-"QQNum": 0,
-"Province": "",
-"City": "",
-"Content": "",
-"Signature": "",
-"Alias": "",
-"Scene": 0,
-"VerifyFlag": 0,
-"AttrStatus": 0,
-"Sex": 0,
-"Ticket": "",
-"OpCode": 0
-}
-,
-"ForwardFlag": 0,
-"AppInfo": {
-"AppID": "",
-"Type": 0
-}
-,
-"HasProductId": 0,
-"Ticket": "",
-"ImgHeight": 0,
-"ImgWidth": 0,
-"SubMsgType": 0,
-"NewMsgId": 2997611779858438986,
-"OriContent": ""
-}
-,{
-"MsgId": "4460759517662020701",
-"FromUserName": "@41a102cb15e7db206552d27e225cee9c",
-"ToUserName": "@cbbe6f5ef566e5905cf42c6fc42d652eb8d30718658ccc7e32483ea502a0e01e",
-"MsgType": 1,
-"Content": "滚",
-"Status": 3,
-"ImgStatus": 1,
-"CreateTime": 1494341804,
-"VoiceLength": 0,
-"PlayLength": 0,
-"FileName": "",
-"FileSize": "",
-"MediaId": "",
-"Url": "",
-"AppMsgType": 0,
-"StatusNotifyCode": 0,
-"StatusNotifyUserName": "",
-"RecommendInfo": {
-"UserName": "",
-"NickName": "",
-"QQNum": 0,
-"Province": "",
-"City": "",
-"Content": "",
-"Signature": "",
-"Alias": "",
-"Scene": 0,
-"VerifyFlag": 0,
-"AttrStatus": 0,
-"Sex": 0,
-"Ticket": "",
-"OpCode": 0
-}
-,
-"ForwardFlag": 0,
-"AppInfo": {
-"AppID": "",
-"Type": 0
-}
-,
-"HasProductId": 0,
-"Ticket": "",
-"ImgHeight": 0,
-"ImgWidth": 0,
-"SubMsgType": 0,
-"NewMsgId": 4460759517662020701,
-"OriContent": ""
-}
-,{
-"MsgId": "1241119843200681721",
-"FromUserName": "@41a102cb15e7db206552d27e225cee9c",
-"ToUserName": "@cbbe6f5ef566e5905cf42c6fc42d652eb8d30718658ccc7e32483ea502a0e01e",
-"MsgType": 1,
-"Content": "吃屎去吧",
-"Status": 3,
-"ImgStatus": 1,
-"CreateTime": 1494341809,
-"VoiceLength": 0,
-"PlayLength": 0,
-"FileName": "",
-"FileSize": "",
-"MediaId": "",
-"Url": "",
-"AppMsgType": 0,
-"StatusNotifyCode": 0,
-"StatusNotifyUserName": "",
-"RecommendInfo": {
-"UserName": "",
-"NickName": "",
-"QQNum": 0,
-"Province": "",
-"City": "",
-"Content": "",
-"Signature": "",
-"Alias": "",
-"Scene": 0,
-"VerifyFlag": 0,
-"AttrStatus": 0,
-"Sex": 0,
-"Ticket": "",
-"OpCode": 0
-}
-,
-"ForwardFlag": 0,
-"AppInfo": {
-"AppID": "",
-"Type": 0
-}
-,
-"HasProductId": 0,
-"Ticket": "",
-"ImgHeight": 0,
-"ImgWidth": 0,
-"SubMsgType": 0,
-"NewMsgId": 1241119843200681721,
+"NewMsgId": 6068562069095094795,
 "OriContent": ""
 }
 ],
 "ModContactCount": 1,
 "ModContactList": [{
-"UserName": "@@7be4654ef7170240e172e1072ce59b8ddf95c0839eef52a944be4e70218120cb",
+"UserName": "@@59e9a11c5254ecb158e246244a62805d6c6f64a6a16b8be8db90cd2ab02318eb",
 "NickName": "leeweoppp",
 "Sex": 0,
 "HeadImgUpdateFlag": 1,
 "ContactType": 0,
 "Alias": "",
-"ChatRoomOwner": "@cbbe6f5ef566e5905cf42c6fc42d652eb8d30718658ccc7e32483ea502a0e01e",
-"HeadImgUrl": "/cgi-bin/mmwebwx-bin/webwxgetheadimg?seq=0&username=@@7be4654ef7170240e172e1072ce59b8ddf95c0839eef52a944be4e70218120cb&skey=@crypt_b0d2e6dd_374fad31fd8f98004f3d840d09b27edf",
+"ChatRoomOwner": "@f00d6e04c096bca8cd476d393bf5433110aa9d6ba04b88c68effb54d779ab131",
+"HeadImgUrl": "/cgi-bin/mmwebwx-bin/webwxgetheadimg?seq=0&username=@@59e9a11c5254ecb158e246244a62805d6c6f64a6a16b8be8db90cd2ab02318eb&skey=@crypt_b0d2e6dd_ae3156f5f9a2bb1d4c1e02c3c0dcf387",
 "ContactFlag": 3,
 "MemberCount": 3,
 "MemberList": [{
 "Uin": 0,
-"UserName": "@cbbe6f5ef566e5905cf42c6fc42d652eb8d30718658ccc7e32483ea502a0e01e",
+"UserName": "@f00d6e04c096bca8cd476d393bf5433110aa9d6ba04b88c68effb54d779ab131",
 "NickName": "mra",
 "AttrStatus": 33558565,
 "PYInitial": "",
@@ -229,7 +82,7 @@
 }
 ,{
 "Uin": 0,
-"UserName": "@41a102cb15e7db206552d27e225cee9c",
+"UserName": "@4046ed40f763eba8646939ab001e677f",
 "NickName": "cp4",
 "AttrStatus": 230303,
 "PYInitial": "",
@@ -242,7 +95,7 @@
 }
 ,{
 "Uin": 0,
-"UserName": "@d72df95810635c49d3ced052ca33e51fee9e790d61ee4a64a42e909162f2204b",
+"UserName": "@1a3c9ad6dab887da49a7e44ba97f31cc44c1fee8b12c979bf9cbd03960966107",
 "NickName": "caesaris",
 "AttrStatus": 234533,
 "PYInitial": "",
@@ -300,14 +153,14 @@
 ,
 "ContinueFlag": 0,
 "SyncKey": {
-"Count": 9,
+"Count": 10,
 "List": [{
 "Key": 1,
-"Val": 655503938
+"Val": 655504094
 }
 ,{
 "Key": 2,
-"Val": 655504029
+"Val": 655504097
 }
 ,{
 "Key": 3,
@@ -323,7 +176,7 @@
 }
 ,{
 "Key": 201,
-"Val": 1494341809
+"Val": 1494349813
 }
 ,{
 "Key": 203,
@@ -331,25 +184,29 @@
 }
 ,{
 "Key": 1000,
-"Val": 1494325082
+"Val": 1494344568
 }
 ,{
 "Key": 1001,
 "Val": 1494325112
+}
+,{
+"Key": 1004,
+"Val": 1494344568
 }
 ]
 }
 ,
 "SKey": "",
 "SyncCheckKey": {
-"Count": 9,
+"Count": 10,
 "List": [{
 "Key": 1,
-"Val": 655503938
+"Val": 655504094
 }
 ,{
 "Key": 2,
-"Val": 655504029
+"Val": 655504097
 }
 ,{
 "Key": 3,
@@ -365,7 +222,7 @@
 }
 ,{
 "Key": 201,
-"Val": 1494341809
+"Val": 1494349813
 }
 ,{
 "Key": 203,
@@ -373,11 +230,15 @@
 }
 ,{
 "Key": 1000,
-"Val": 1494325082
+"Val": 1494344568
 }
 ,{
 "Key": 1001,
 "Val": 1494325112
+}
+,{
+"Key": 1004,
+"Val": 1494344568
 }
 ]
 }
