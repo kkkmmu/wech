@@ -28,27 +28,26 @@ import (
 //  导致很多开发者在开发微信网页版的时候返现有些用户能登录并获取到消息，有的只能登录不能获取到消息
 //  微信返回码RetCode和相应的解决方案：0－正常；1－失败，refresh；1101/1100－登出/失败，refresh/重新登录；1203－恭喜您，几个小时后重试，没有解决方案；Selector：2－新消息，6/7－进入/离开聊天界面通常是在手机上进行操作，重新初始化即可，0－正常
 type wechat struct {
-	client            *http.Client
-	cacheName         string
-	userAgent         string
-	uuid              string
-	Redirect          string
-	UUID              string
-	Scan              string
-	login             chan bool
-	Ticket            string            `json:"Ticket"`
-	Lang              string            `json:"Lang"`
-	BaseURL           string            `json:"BaseURL"`
-	BaseRequest       *BaseRequest      `json:"BaseRequest"`
-	DeviceID          string            `json:"DeviceID"`
-	GroupList         []Member          `json:"GroupList"`
-	SyncServer        string            `json:"SyncServer"`
-	SyncKey           *SyncKey          `json:"SyncKey"`
-	UserName          string            `json:"UserName"`
-	NickName          string            `json:"NickName"`
-	ContactDBNickName map[string]Member `json:"ContactDBNickName"`
-	ContactDBUserName map[string]Member `json:"ContactDBUserName"`
-	Cookies           []*http.Cookie    `json:"Cookies"`
+	client      *http.Client
+	cacheName   string
+	userAgent   string
+	uuid        string
+	Redirect    string
+	UUID        string
+	Scan        string
+	login       chan bool
+	Ticket      string            `json:"Ticket"`
+	Lang        string            `json:"Lang"`
+	BaseURL     string            `json:"BaseURL"`
+	BaseRequest *BaseRequest      `json:"BaseRequest"`
+	DeviceID    string            `json:"DeviceID"`
+	GroupList   []Member          `json:"GroupList"`
+	SyncServer  string            `json:"SyncServer"`
+	SyncKey     *SyncKey          `json:"SyncKey"`
+	UserName    string            `json:"UserName"`
+	NickName    string            `json:"NickName"`
+	ContactDB   map[string]Member `json:"ContactDB"`
+	Cookies     []*http.Cookie    `json:"Cookies"`
 }
 
 type Cache struct {
@@ -171,7 +170,7 @@ type CommonReqBody struct {
 	Code               int
 	FromUserName       string
 	ToUserName         string
-	ClientMsgId        int64
+	ClientMsgId        int
 	ClientMediaId      int
 	TotalLen           int
 	StartPos           int
@@ -278,8 +277,8 @@ type TextMessage struct {
 	Content      string
 	FromUserName string
 	ToUserName   string
-	LocalID      int64
-	ClientMsgId  int64
+	LocalID      int
+	ClientMsgId  int
 }
 
 // MediaMessage
@@ -288,17 +287,17 @@ type MediaMessage struct {
 	Content      string
 	FromUserName string
 	ToUserName   string
-	LocalID      int64
-	ClientMsgId  int64
+	LocalID      int
+	ClientMsgId  int
 	MediaId      string
 }
 
 // EmotionMessage: gif/emoji message struct
 type EmotionMessage struct {
-	ClientMsgId  int64
+	ClientMsgId  int
 	EmojiFlag    int
 	FromUserName string
-	LocalID      int64
+	LocalID      int
 	MediaId      string
 	ToUserName   string
 	Type         int
@@ -307,7 +306,7 @@ type EmotionMessage struct {
 type SendMessageResponse struct {
 	BaseResponse BaseResponse
 	MsgID        string `json:"MsgId"`
-	LocalID      int64  `json:"LocalID"`
+	LocalID      int    `json:"LocalID"`
 }
 
 type RecommendInfo struct {
@@ -545,8 +544,6 @@ func (wc *wechat) FastLogin() error {
 	wc.client.Jar.SetCookies(u, wc.Cookies)
 	return nil
 }
-
-//| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxpushloginurl |
 func (wc *wechat) GetUUID() error {
 
 	//wxeb7ec651dd0aefa9
@@ -847,7 +844,7 @@ func (wc *wechat) WeChatInit() {
 
 		uri := wc.BaseURL + "/webwxinit?" + params.Encode()
 	*/
-	uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/" + "webwxinit?pass_ticket=" + wc.BaseRequest.PassTicket + "&skey=" + wc.BaseRequest.Skey + "&r=" + strconv.FormatInt(time.Now().Unix(), 10)
+	uri := "https://wx.qq.com/cgi-bin/mmwebwx-bin/" + "webwxinit?pass_ticket=" + wc.BaseRequest.PassTicket + "&skey=" + wc.BaseRequest.Skey + "&r=" + strconv.FormatInt(time.Now().Unix(), 10)
 
 	log.Println(uri)
 	log.Println(wc.BaseRequest)
@@ -928,7 +925,7 @@ func (wc *wechat) WeChatInit() {
 */
 func (wc *wechat) GetContactList() {
 	//uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/" + "webwxgetcontact?pass_ticket=" + wc.BaseRequest.PassTicket + "&skey=" + wc.BaseRequest.Skey + "&r=" + strconv.FormatInt(time.Now().Unix(), 10) + "&seq=0"
-	uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/" + "webwxgetcontact?pass_ticket=" + wc.BaseRequest.PassTicket + "&skey=" + wc.BaseRequest.Skey + "&r=" + strconv.FormatInt(time.Now().Unix(), 10)
+	uri := "https://wx.qq.com/cgi-bin/mmwebwx-bin/" + "webwxgetcontact?pass_ticket=" + wc.BaseRequest.PassTicket + "&skey=" + wc.BaseRequest.Skey + "&r=" + strconv.FormatInt(time.Now().Unix(), 10)
 	data, err := json.Marshal(initBaseRequest{
 		BaseRequest: wc.BaseRequest,
 	})
@@ -965,15 +962,13 @@ func (wc *wechat) GetContactList() {
 		return
 	}
 
-	wc.ContactDBNickName = make(map[string]Member, len(crsp.MemberList))
-	wc.ContactDBUserName = make(map[string]Member, len(crsp.MemberList))
+	wc.ContactDB = make(map[string]Member, len(crsp.MemberList))
 	for _, c := range crsp.MemberList {
 		if strings.HasPrefix(c.UserName, "@@") {
 			wc.GroupList = append(wc.GroupList, c)
 		}
 		log.Println("Get new contact: ", c.NickName, " -> ", c.UserName)
-		wc.ContactDBNickName[c.NickName] = c
-		wc.ContactDBUserName[c.UserName] = c
+		wc.ContactDB[c.NickName] = c
 	}
 
 	save, _ := json.Marshal(crsp)
@@ -1011,7 +1006,7 @@ func (wc *wechat) GetGroupMemberList() {
 	params.Add("type", "ex")
 	params.Add("r", strconv.FormatInt(time.Now().Unix(), 10))
 
-	uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?" + params.Encode()
+	uri := "https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?" + params.Encode()
 
 	//@liwei: Here the group list can be get from the result of webwxgetcontact
 	data, err := json.Marshal(CommonReqBody{
@@ -1041,6 +1036,7 @@ func (wc *wechat) GetGroupMemberList() {
 	log.Println(resp.Header)
 	log.Println(resp.StatusCode)
 	log.Println(len(wc.GroupList))
+	log.Println(wc.GroupList[0].UserName)
 
 	log.Println("Cookies: ", resp.Cookies())
 
@@ -1105,7 +1101,7 @@ func (wc *wechat) SyncCheck() {
 		params.Add("synckey", wc.SyncKey.String())
 		params.Add("_", strconv.FormatInt(time.Now().Unix()*1000, 10))
 
-		uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/synccheck?" + params.Encode()
+		uri := "https://wx.qq.com/cgi-bin/mmwebwx-bin/synccheck?" + params.Encode()
 		resp, err := wc.client.Get(uri)
 		if err != nil {
 			log.Println("Failed to Sync for server: ", uri, " with error: ", err.Error())
@@ -1132,6 +1128,7 @@ func (wc *wechat) GetSyncServer() bool {
 	servers := [...]string{
 		`webpush.wx.qq.com`,
 		`wx2.qq.com`,
+		`wx.qq.com`,
 		`webpush.wx2.qq.com`,
 		`wx8.qq.com`,
 		`webpush.wx8.qq.com`,
@@ -1222,7 +1219,7 @@ func (wc *wechat) MessageSync() {
 		params.Add("lang", wc.Lang)
 		params.Add("pass_ticket", wc.BaseRequest.PassTicket)
 
-		uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsync?" + params.Encode()
+		uri := "https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?" + params.Encode()
 
 		data, err := json.Marshal(CommonReqBody{
 			BaseRequest: wc.BaseRequest,
@@ -1259,7 +1256,7 @@ func (wc *wechat) MessageSync() {
 			continue
 		}
 
-		//log.Println(ms)
+		log.Println(ms)
 		save, _ := json.Marshal(ms)
 		wc.SaveToFile("MessageSyncResponse.json", save)
 
@@ -1273,10 +1270,6 @@ func (wc *wechat) MessageSync() {
 
 		cache, _ := json.Marshal(wc)
 		wc.SaveToFile("Cache.json", cache)
-
-		for _, msg := range ms.AddMsgList {
-			log.Println("ReceivedNewMessage from: ", wc.ContactDBUserName[msg.FromUserName].NickName, " type: ", msg.MsgType, " content: ", msg.Content)
-		}
 	}
 }
 
@@ -1371,20 +1364,19 @@ func (wc *wechat) SaveToFile(name string, content []byte) {
     ClientMsgId: `时间戳` <br> }
 */
 
-//这个函数到底是用来干啥的？
 func (wc *wechat) StatusNotify() {
 	params := url.Values{}
 	params.Add("lang", wc.Lang)
 	params.Add("pass_ticket", wc.BaseRequest.PassTicket)
 
-	uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxstatusnotify?" + params.Encode()
+	uri := "https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxstatusnotify?" + params.Encode()
 
 	data, err := json.Marshal(CommonReqBody{
 		BaseRequest:  wc.BaseRequest,
 		Code:         3,
 		FromUserName: wc.UserName,
 		ToUserName:   wc.UserName,
-		ClientMsgId:  int64(time.Now().Unix()) + 1,
+		ClientMsgId:  int(time.Now().Unix()) + 1,
 	})
 	if err != nil {
 		log.Println("Error happend when marshal: ", err.Error())
@@ -1419,7 +1411,8 @@ func (wc *wechat) StatusNotify() {
 
 	save, _ := json.Marshal(sn)
 	wc.SaveToFile("StatusNotify.json", save)
-	//log.Println(sn)
+	log.Println(sn)
+
 }
 
 /*
@@ -1453,7 +1446,7 @@ func (wc *wechat) SendTextMessage() {
 	params := url.Values{}
 	params.Add("pass_ticket", wc.BaseRequest.PassTicket)
 
-	uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?" + params.Encode()
+	uri := "https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?" + params.Encode()
 
 	data, err := json.Marshal(CommonReqBody{
 		BaseRequest: wc.BaseRequest,
@@ -1461,14 +1454,14 @@ func (wc *wechat) SendTextMessage() {
 			Type:         1,
 			Content:      "Hello world",
 			FromUserName: wc.UserName,
-			ToUserName:   wc.ContactDBNickName["cp4"].UserName,
-			LocalID:      int64(time.Now().Unix() * 1e4),
-			ClientMsgId:  int64(time.Now().Unix() * 1e4),
+			ToUserName:   wc.ContactDB["cp4"].UserName,
+			LocalID:      int(time.Now().Unix() * 1e4),
+			ClientMsgId:  int(time.Now().Unix() * 1e4),
 		},
 	})
 
-	log.Println(wc.ContactDBNickName)
-	log.Println("Sending message from: ", wc.UserName, " to ", wc.ContactDBNickName["cp4"].UserName)
+	log.Println(wc.ContactDB)
+	log.Println("Sending message from: ", wc.UserName, " to ", wc.ContactDB["cp4"].UserName)
 	if err != nil {
 		log.Println("Error happend when marshal: ", err.Error())
 		return
@@ -1604,9 +1597,6 @@ func (wc *wechat) RevokeMessage() {
             'skey'               => server()->skey,
         ];
 
-
-	uri := common.CgiUrl + "/webwxverifyuser?" + km.Encode()
-	uri := common.CgiUrl + "/webwxcreatechatroom?" + km.Encode()
 */
 
 func main() {
@@ -1628,7 +1618,7 @@ func main() {
 		DeviceID:    "0x1234567890",
 		userAgent:   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36",
 		GroupList:   make([]Member, 0, 10),
-		BaseURL:     "https://wx2.qq.com/cgi-bin/mmwebwx-bin/",
+		BaseURL:     "https://wx.qq.com/cgi-bin/mmwebwx-bin/",
 	}
 	if err := wc.FastLogin(); err != nil {
 		wc.GetUUID()

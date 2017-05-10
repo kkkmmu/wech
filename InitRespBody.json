@@ -9,7 +9,7 @@
 "Uin": 0,
 "UserName": "filehelper",
 "NickName": "文件传输助手",
-"HeadImgUrl": "/cgi-bin/mmwebwx-bin/webwxgeticon?seq=0&username=filehelper&skey=@crypt_b0d2e6dd_ae3156f5f9a2bb1d4c1e02c3c0dcf387",
+"HeadImgUrl": "/cgi-bin/mmwebwx-bin/webwxgeticon?seq=0&username=filehelper&skey=@crypt_b0d2e6dd_e0b799a08db586d2621891c75226b165",
 "ContactFlag": 0,
 "MemberCount": 0,
 "MemberList": [],
@@ -40,9 +40,9 @@
 }
 ,{
 "Uin": 0,
-"UserName": "@4046ed40f763eba8646939ab001e677f",
+"UserName": "@4bb7eac96617baac12c14c0d00710b9f",
 "NickName": "cp4",
-"HeadImgUrl": "/cgi-bin/mmwebwx-bin/webwxgeticon?seq=655503413&username=@4046ed40f763eba8646939ab001e677f&skey=@crypt_b0d2e6dd_ae3156f5f9a2bb1d4c1e02c3c0dcf387",
+"HeadImgUrl": "/cgi-bin/mmwebwx-bin/webwxgeticon?seq=655503413&username=@4bb7eac96617baac12c14c0d00710b9f&skey=@crypt_b0d2e6dd_e0b799a08db586d2621891c75226b165",
 "ContactFlag": 3,
 "MemberCount": 0,
 "MemberList": [],
@@ -73,34 +73,34 @@
 }
 ,{
 "Uin": 0,
-"UserName": "@4892872eabab85a21c3e01b3a94df6f3",
-"NickName": "小小臭臭",
-"HeadImgUrl": "/cgi-bin/mmwebwx-bin/webwxgeticon?seq=655502372&username=@4892872eabab85a21c3e01b3a94df6f3&skey=@crypt_b0d2e6dd_ae3156f5f9a2bb1d4c1e02c3c0dcf387",
+"UserName": "weixin",
+"NickName": "微信团队",
+"HeadImgUrl": "/cgi-bin/mmwebwx-bin/webwxgeticon?seq=643172153&username=weixin&skey=@crypt_b0d2e6dd_e0b799a08db586d2621891c75226b165",
 "ContactFlag": 3,
 "MemberCount": 0,
 "MemberList": [],
 "RemarkName": "",
 "HideInputBarFlag": 0,
 "Sex": 0,
-"Signature": "吃喝玩乐",
-"VerifyFlag": 8,
+"Signature": "微信团队官方帐号",
+"VerifyFlag": 56,
 "OwnerUin": 0,
-"PYInitial": "XXCC",
-"PYQuanPin": "xiaoxiaochouchou",
+"PYInitial": "WXTD",
+"PYQuanPin": "weixintuandui",
 "RemarkPYInitial": "",
 "RemarkPYQuanPin": "",
 "StarFriend": 0,
 "AppAccountFlag": 0,
 "Statues": 0,
-"AttrStatus": 0,
-"Province": "陕西",
-"City": "西安",
+"AttrStatus": 4,
+"Province": "",
+"City": "",
 "Alias": "",
 "SnsFlag": 0,
 "UniFriend": 0,
 "DisplayName": "",
 "ChatRoomId": 0,
-"KeyWord": "gh_",
+"KeyWord": "wei",
 "EncryChatRoomId": "",
 "IsOwner": 0
 }
@@ -109,11 +109,11 @@
 "Count": 4,
 "List": [{
 "Key": 1,
-"Val": 655504094
+"Val": 655504100
 }
 ,{
 "Key": 2,
-"Val": 655504093
+"Val": 655504289
 }
 ,{
 "Key": 3,
@@ -121,16 +121,16 @@
 }
 ,{
 "Key": 1000,
-"Val": 1494344568
+"Val": 1494375302
 }
 ]
 }
 ,
 "User": {
 "Uin": 407044228,
-"UserName": "@f00d6e04c096bca8cd476d393bf5433110aa9d6ba04b88c68effb54d779ab131",
+"UserName": "@ce00f61df04aaa334a3a82d37e3bd5a77824710761fa2c0993b45428dd4f18de",
 "NickName": "mra",
-"HeadImgUrl": "/cgi-bin/mmwebwx-bin/webwxgeticon?seq=661881069&username=@f00d6e04c096bca8cd476d393bf5433110aa9d6ba04b88c68effb54d779ab131&skey=@crypt_b0d2e6dd_ae3156f5f9a2bb1d4c1e02c3c0dcf387",
+"HeadImgUrl": "/cgi-bin/mmwebwx-bin/webwxgeticon?seq=77515180&username=@ce00f61df04aaa334a3a82d37e3bd5a77824710761fa2c0993b45428dd4f18de&skey=@crypt_b0d2e6dd_e0b799a08db586d2621891c75226b165",
 "RemarkName": "",
 "PYInitial": "",
 "PYQuanPin": "",
@@ -148,26 +148,13 @@
 "SnsFlag": 0
 }
 ,
-"ChatSet": "filehelper,@4046ed40f763eba8646939ab001e677f,@4892872eabab85a21c3e01b3a94df6f3,",
-"SKey": "@crypt_b0d2e6dd_ae3156f5f9a2bb1d4c1e02c3c0dcf387",
+"ChatSet": "filehelper,@4bb7eac96617baac12c14c0d00710b9f,weixin,",
+"SKey": "@crypt_b0d2e6dd_e0b799a08db586d2621891c75226b165",
 "ClientVersion": 637863731,
-"SystemTime": 1494349812,
+"SystemTime": 1494376243,
 "GrayScale": 1,
 "InviteStartCount": 40,
-"MPSubscribeMsgCount": 1,
-"MPSubscribeMsgList": [{
-"UserName": "@4892872eabab85a21c3e01b3a94df6f3",
-"MPArticleCount": 1,
-"MPArticleList": [{
-"Title": "教师节快乐",
-"Digest": "在硕果累累、丹桂飘香的九月，我们迎来了第32个教师节。2016年9月9日上午8点，华北电力大学组织了2016",
-"Cover": "http://mmbiz.qpic.cn/mmbiz_jpg/kcyyKkl9hweGndN6Ded9iaNuU1SOgg11K0jD0ABJY5Fap2xub2HU7QBH4BSPgFHsfjswcaXFkeMiaavCAwwjFkrw/640?wxtype=jpeg&wxfrom=0|0|0",
-"Url": "http://mp.weixin.qq.com/s?__biz=MzI1MzQ2MDQ2OQ==&mid=100000004&idx=1&sn=aa93c36946a020d3d327a89af7853072&scene=18#rd"
-}
-],
-"Time": 1494336561,
-"NickName": "小小臭臭"
-}
-],
+"MPSubscribeMsgCount": 0,
+"MPSubscribeMsgList": [],
 "ClickReportInterval": 600000
 }
