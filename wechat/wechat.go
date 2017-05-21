@@ -1,4 +1,4 @@
-package main
+package wechat
 
 import (
 	"crypto/tls"
@@ -56,485 +56,6 @@ type wechat struct {
 	Cookies           []*http.Cookie    `json:"Cookies"`
 	Cookie            map[string]string
 	MediaCount        uint32
-}
-
-type Cache struct {
-	BaseResponse *BaseResponse  `json:"BaseResponse"`
-	DeviceID     string         `json:"DeviceID"`
-	SyncKey      *SyncKey       `json:"SyncKey"`
-	UserName     string         `json:"UserName"`
-	NickName     string         `json:"NickName"`
-	SyncServer   string         `json:"SyncServer"`
-	Ticket       string         `json:"Ticket"`
-	Lang         string         `json:"Lang"`
-	Cookies      []*http.Cookie `json:"Cookies"`
-}
-
-type StatusNotifyResponse struct {
-	BaseResponse *BaseResponse `json:"BaseResponse"`
-	MsgId        string        `json:"MsgId"`
-}
-
-type User struct {
-	UserName          string `json:"UserName"`
-	Uin               int64  `json:"Uin"`
-	NickName          string `json:"NickName"`
-	HeadImgUrl        string `json:"HeadImgUrl" xml:""`
-	RemarkName        string `json:"RemarkName" xml:""`
-	PYInitial         string `json:"PYInitial" xml:""`
-	PYQuanPin         string `json:"PYQuanPin" xml:""`
-	RemarkPYInitial   string `json:"RemarkPYInitial" xml:""`
-	RemarkPYQuanPin   string `json:"RemarkPYQuanPin" xml:""`
-	HideInputBarFlag  int    `json:"HideInputBarFlag" xml:""`
-	StarFriend        int    `json:"StarFriend" xml:""`
-	Sex               int    `json:"Sex" xml:""`
-	Signature         string `json:"Signature" xml:""`
-	AppAccountFlag    int    `json:"AppAccountFlag" xml:""`
-	VerifyFlag        int    `json:"VerifyFlag" xml:""`
-	ContactFlag       int    `json:"ContactFlag" xml:""`
-	WebWxPluginSwitch int    `json:"WebWxPluginSwitch" xml:""`
-	HeadImgFlag       int    `json:"HeadImgFlag" xml:""`
-	SnsFlag           int    `json:"SnsFlag" xml:""`
-}
-
-// BaseRequest is a base for all wx api request.
-type BaseRequest struct {
-	XMLName xml.Name `xml:"error" json:"-"`
-
-	Ret        int    `xml:"ret" json:"-"`
-	Message    string `xml:"message" json:"-"`
-	Wxsid      string `xml:"wxsid" json:"Sid"`
-	Skey       string `xml:"skey"`
-	DeviceID   string `xml:"-"`
-	Wxuin      string `xml:"wxuin" json:"Uin"`
-	PassTicket string `xml:"pass_ticket" json:"-"`
-}
-
-// Contact is wx Account struct
-type Contact struct {
-	GGID            string
-	UserName        string
-	NickName        string
-	HeadImgURL      string `json:"HeadImgUrl"`
-	HeadHash        string
-	RemarkName      string
-	DisplayName     string
-	StarFriend      float64
-	Sex             float64
-	Signature       string
-	VerifyFlag      float64
-	ContactFlag     float64
-	HeadImgFlag     float64
-	Province        string
-	City            string
-	Alias           string
-	EncryChatRoomID string `json:"EncryChatRoomId"`
-	Type            int
-	MemberList      []*Contact
-}
-
-type Member struct {
-	Uin               int64  `json:"Uin"`
-	UserName          string `json:"UserName"`
-	NickName          string `json:"NickName"`
-	HeadImgUrl        string `json:"HeadImgUrl"`
-	ContactFlag       int    `json:"ContactFlag"`
-	MemberCount       int    `json:"MemberCount"`
-	MemberList        []User `json:"MemberList"`
-	RemarkName        string `json:"RemarkName"`
-	HideInputBarFlag  int    `json:"HideInputBarFlag"`
-	Sex               int    `json:"Sex"`
-	Signature         string `json:"Signature"`
-	VerifyFlag        int    `json:"VerifyFlag"`
-	OwnerUin          int    `json:"OwnerUin"`
-	PYInitial         string `json:"PYInitial"`
-	PYQuanPin         string `json:"PYQuanPin"`
-	RemarkPYInitial   string `json:"RemarkPYInitial"`
-	RemarkPYQuanPin   string `json:"RemarkPYQuanPin"`
-	StarFriend        int    `json:"StarFriend"`
-	AppAccountFlag    int    `json:"AppAccountFlag"`
-	Statues           int    `json:"Statues"`
-	AttrStatus        int    `json:"AttrStatus"`
-	Province          string `json:"Province"`
-	City              string `json:"City"`
-	Alias             string `json:"Alias"`
-	SnsFlag           int    `json:"SnsFlag"`
-	UniFriend         int    `json:"UniFriend"`
-	DisplayName       string `json:"DisplayName"`
-	ChatRoomId        int    `json:"ChatRoomId"`
-	KeyWord           string `json:"KeyWord"`
-	EncryChatRoomId   string `json:"EncryChatRoomId"`
-	IsOwner           int    `json:"IsOwner"`
-	HeadImgUpdateFlag int    `json:"HeadImgUpdateFlag"`
-	ContactType       int    `json:"ContactType"`
-	ChatRoomOwner     string `json:"ChatRoomOwner"`
-}
-
-type CommonReqBody struct {
-	BaseRequest        *BaseRequest
-	Msg                interface{}
-	SyncKey            *SyncKey
-	rr                 int
-	Code               int
-	FromUserName       string
-	ToUserName         string
-	ClientMsgId        int64
-	ClientMediaId      int
-	TotalLen           string
-	StartPos           int
-	DataLen            string
-	MediaType          int
-	Scene              int
-	Count              int
-	List               []Member
-	Opcode             int
-	SceneList          []int
-	SceneListCount     int
-	VerifyContent      string
-	VerifyUserList     []*VerifyUser
-	VerifyUserListSize int
-	skey               string
-	MemberCount        int
-	MemberList         []*Member
-	Topic              string
-}
-
-/*
-{
-	"MsgId": "7318483579373924965",
-	"FromUserName": "@e24439096308969756e667d06f33a50e",
-	"ToUserName": "@b18d3f16a138505fd2ef663815925561948e2f970a910bba56396a5a62e7bf30",
-	"MsgType": 1,
-	"Content": "睡觉睡觉就是计算机计算机三级到你家都觉得那女的",
-	"Status": 3,
-	"ImgStatus": 1,
-	"CreateTime": 1494261110,
-	"VoiceLength": 0,
-	"PlayLength": 0,
-	"FileName": "",
-	"FileSize": "",
-	"MediaId": "",
-	"Url": "",
-	"AppMsgType": 0,
-	"StatusNotifyCode": 0,
-	"StatusNotifyUserName": "",
-	"RecommendInfo": {
-	    "UserName": "",
-	    "NickName": "",
-	    "QQNum": 0,
-	    "Province": "",
-	    "City": "",
-	    "Content": "",
-	    "Signature": "",
-	    "Alias": "",
-	    "Scene": 0,
-	    "VerifyFlag": 0,
-	    "AttrStatus": 0,
-	    "Sex": 0,
-	    "Ticket": "",
-	    "OpCode": 0
-	}
-	,
-	"ForwardFlag": 0,
-	"AppInfo": {
-	    "AppID": "",
-	    "Type": 0
-	}
-	,
-	"HasProductId": 0,
-	"Ticket": "",
-	"ImgHeight": 0,
-	"ImgWidth": 0,
-	"SubMsgType": 0,
-	"NewMsgId": 7318483579373924965,
-	"OriContent": ""
-    }
-*/
-type Message struct {
-	MsgId                string        `json:"MsgId"`
-	FromUserName         string        `json:"FromUserName"`
-	ToUserName           string        `json:"ToUserName"`
-	MsgType              int           `json:"MsgType"`
-	Content              string        `json:"Content"`
-	Status               int           `json:"Status"`
-	ImgStatus            int           `json:"ImgStatus"`
-	CreateTime           int           `json:"CreateTime"`
-	VoiceLength          int           `json:"VoiceLength"`
-	PlayLength           int           `json:"PlayLength"`
-	FileName             string        `json:"FileName"`
-	FileSize             string        `json:"FileSize"`
-	MediaId              string        `json:"MediaId"`
-	Url                  string        `json:"Url"`
-	AppMsgType           int           `json:"AppMsgType"`
-	StatusNotifyCode     int           `json:"StatusNotifyCode"`
-	StatusNotifyUserName string        `json:"StatusNotifyUserName"`
-	RecommendInfo        RecommendInfo `json:"RecommendInfo"`
-	ForwardFlag          int           `json:"ForwardFlag"`
-	AppInfo              AppInfo       `json:"AppInfo"`
-	HasProductId         int           `json:"HasProductId"`
-	Ticket               string        `json:"Ticket"`
-	ImgHeight            int           `json:"ImgHeight"`
-	ImgWidth             int           `json:"ImgWidth"`
-	SubMsgType           int           `json:"SubMsgType"`
-	NewMsgId             int64         `json:"NewMsgId"`
-	OriContent           string        `json:"OriContent"`
-}
-
-type TextMessage struct {
-	Type         int
-	Content      string
-	FromUserName string
-	ToUserName   string
-	LocalID      int64
-	ClientMsgId  int64
-}
-
-// MediaMessage
-type MediaMessage struct {
-	Type         int
-	Content      string
-	FromUserName string
-	ToUserName   string
-	LocalID      int64
-	ClientMsgId  int64
-	MediaId      string
-}
-
-// EmotionMessage: gif/emoji message struct
-type EmotionMessage struct {
-	ClientMsgId  int64
-	EmojiFlag    int
-	FromUserName string
-	LocalID      int64
-	MediaId      string
-	ToUserName   string
-	Type         int
-}
-
-type SendMessageResponse struct {
-	BaseResponse BaseResponse
-	MsgID        string `json:"MsgId"`
-	LocalID      int64  `json:"LocalID"`
-}
-
-type RecommendInfo struct {
-	UserName   string `json:"UserName"`
-	NickName   string `json:"NickName"`
-	QQNum      int    `json:"QQNum"`
-	Province   string `json:"Province"`
-	City       string `json:"City"`
-	Content    string `json:"Content"`
-	Signature  string `json:"Signature"`
-	Alias      string `json:"Alias"`
-	Scene      int    `json:"Scene"`
-	VerifyFlag int    `json:"VerifyFlag"`
-	AttrStatus int    `json:"AttrStatus"`
-	Sex        int    `json:"Sex"`
-	Ticket     string `json:"Ticket"`
-	OpCode     int    `json:"OpCode"`
-}
-type AppInfo struct {
-	AppID string `json:"AppID"`
-	Type  int    `json:"Type"`
-}
-
-/* I think this should be put into Member ---- Contact struct
-type ModifiedContact struct {
-	UserName          string
-	NickName          string
-	Sex               string
-	HeadImgUpdateFlag int
-	ContactType       int
-	Alias             string
-	ChatRoomOwner     string
-	HeadImgUrl        string
-	ContactFlag       int
-	MemberCount       int
-	MemberList        []Member
-	HideInputBarFlag  int
-	Signature         string
-	VerifyFlag        int
-	RemarkName        string
-	Statues           int
-	AttrStatus        int
-	Province          string
-	City              string
-	SnsFlag           string
-	KeyWor            string
-}
-*/
-
-type UserName struct {
-	Buff string `json:"Buff"`
-}
-
-type NickName struct {
-	Buff string `json:"Buff"`
-}
-
-type BindEmail struct {
-	Buff string `json:"Buff"`
-}
-
-type BindMobile struct {
-	Buff string `json:"Buff"`
-}
-
-type Profile struct {
-	BitFlag           int        `json:"BitFlag"`
-	UserName          UserName   `json:"UserName"`
-	NickName          NickName   `json:"NickName"`
-	BindEmail         BindEmail  `json:"BindEmail"`
-	BindMobile        BindMobile `json:"BindMobile"`
-	Status            int        `json:"Status"`
-	Sex               int        `json:"Sex"`
-	PersonalCard      int        `json:"PersonalCard"`
-	Alias             string     `json:"Alias"`
-	HeadImgUpdateFlag int        `json:"HeadImgUpdateFlag"`
-	HeadImgUrl        string     `json:"HeadImgUrl"`
-	Signature         string     `json:"Signature"`
-}
-
-//This message should be carefully handled
-//For each kind of Received new message use different API to handle.
-/*
-	case 3:
-		path = `webwxgetmsgimg`
-	case 47:
-		path = `webwxgetmsgimg`
-	case 34:
-		path = `webwxgetvoice`
-	case 43:
-		path = `webwxgetvideo`
-*/
-type MessageSyncResponse struct {
-	BaseResponse           BaseResponse `json:"BaseResponse"`
-	AddMsgCount            int          `json:"AddMsgCount"` //New message count
-	AddMsgList             []Message    `json:"AddMsgList"`
-	ModContactCount        int          `json:"ModContactCount"` //Changed Contact count
-	ModContactList         []Member     `json:"ModContactList"`
-	DelContactCount        int          `json:"DelContactCount"` //Delete Contact count
-	DelContactList         []Member     `json:"DelContactList"`
-	ModChatRoomMemberCount int          `json:"ModChatRoomMemberCount"`
-	ModChatRoomMemberList  []Member     `json:"ModChatRoomMemberList"`
-	Profile                Profile      `json:"Profile"`
-	ContinueFlag           int          `json:"ContinueFlag"`
-	SyncKey                SyncKey      `json:"SyncKey"`
-	Skey                   string       `json:"Skey"`
-	SyncCheckKey           SyncKey      `json:"SyncCheckKey"`
-}
-
-// GroupContactResponse: get batch contact response struct
-type GetGroupMemberListResponse struct {
-	BaseResponse *BaseResponse `json:"BaseResponse"`
-	Count        int           `json:"Count"`
-	ContactList  []Member      `json:"ContactList"`
-}
-
-// VerifyUser: verify user request body struct
-type VerifyUser struct {
-	Value            string `json:"Value"`
-	VerifyUserTicket string `json:"VerifyUserTicket"`
-}
-
-// ReceivedMessage: for received message
-type ReceivedMessage struct {
-	IsGroup      bool   `json:"IsGroup"`
-	MsgId        string `json:"MsgId"`
-	Content      string `json:"Content"`
-	FromUserName string `json:"FromUserName"`
-	ToUserName   string `json:"ToUserName"`
-	Who          string `json:"Who"`
-	MsgType      int    `json:"MsgType"`
-}
-type GetContactListResponse struct {
-	BaseResponse BaseResponse `json:"BaseResponse"`
-	MemberCount  int          `json:"MemberCount"`
-	MemberList   []Member     `json:"MemberList"`
-	Seq          float64      `json:"Seq"`
-}
-
-type UploadMediaResponse struct {
-	BaseResponse      BaseResponse `json:"BaseResponse"`
-	MediaID           string       `json:"MediaID"`
-	StartPos          int          `json:"StartPos"`
-	CDNThumbImgHeight int          `json:"CDNThumbImgHeight"`
-	CDNThumbImgWidth  int          `json:"CDNThumbImgWidth"`
-}
-
-type Response struct {
-	BaseResponse *BaseResponse `json:"BaseResponse"`
-}
-
-type BaseResponse struct {
-	Ret    int
-	ErrMsg string
-}
-
-type SyncKey struct {
-	Count int      `json:"Count"`
-	List  []KeyVal `json:"List"`
-}
-
-func (sk *SyncKey) String() string {
-	keys := make([]string, 0)
-	for _, v := range sk.List {
-		keys = append(keys, strconv.Itoa(v.Key)+"_"+strconv.Itoa(v.Val))
-	}
-	return strings.Join(keys, "|")
-}
-
-type KeyVal struct {
-	Key int `json:"Key"`
-	Val int `json:"Val"`
-}
-
-type GroupRequest struct {
-	UserName        string
-	EncryChatRoomId string
-}
-
-type InitResponse struct {
-	BaseResponse        BaseResponse         `json:"BaseResponse"`
-	Count               int                  `json:"Count"`
-	User                User                 `json:"User"` //This is ourself
-	ContactList         []Member             `json:"ContactList"`
-	SyncKey             SyncKey              `json:"SyncKey"`
-	ChatSet             string               `json:"ChatSet"`
-	SKey                string               `json:"SKey"`
-	ClientVersion       int                  `json:"ClientVersion"`
-	SystemTime          int                  `json:"SystemTime"`
-	GrayScale           int                  `json:"GrayScale"`
-	InviteStartCount    int                  `json:"InviteStartCount"`
-	MPSubscribeMsgCount int                  `json:"MPSubscribeMsgCount"`
-	MPSubscribeMsgList  []MPSubscribeMsgList `json:"MPSubscribeMsgList"`
-	ClickReportInterval int                  `json:"ClickReportInterval"`
-}
-
-type MPArticle struct {
-	Titile string `json:"Titile"`
-	Digest string `json:"Digest"`
-	Cover  string `json:"Cover"`
-	Url    string `json:"Url"`
-}
-
-type MPSubscribeMsgList struct {
-	UserName       string      `json:"UserName"`
-	MPArticleCount int         `json:"MPArticleCount"`
-	MPArticleList  []MPArticle `json:"MPArticleList"`
-	Time           int         `json:"Time"`
-	NickName       string      `json:"NickName"`
-}
-
-type initBaseRequest struct {
-	BaseRequest *BaseRequest
-}
-
-type initBaseResp struct {
-	Response
-	User    Contact
-	Skey    string
-	SyncKey map[string]interface{}
 }
 
 var FetchTicket = regexp.MustCompile(`ticket=(?P<ticket>[[:word:]_\$@#\?\-=]+)&uuid=(?P<uuid>[[:word:]_\$@#\?\-=]+)&lang=(?P<lang>[[:word:]_\$@#\?\-=]+)&scan=(?P<lang>[[:word:]_\$@#\?\-=]+)`)
@@ -1034,8 +555,6 @@ func (wc *wechat) GetContactList() {
 注意这里的返回值和 getcontact的返回值是不同的. 留意两个结构体的内容。
 目前测试的结果API 应该为： https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r=xxx&pass_ticket=xxx |
 */
-
-//请求群组
 func (wc *wechat) GetGroupMemberList() {
 	params := url.Values{}
 	params.Add("pass_ticket", wc.BaseRequest.PassTicket)
@@ -1123,9 +642,8 @@ selector:
 
 //心跳函数
 */
-//@liwei: 这里应该在该函数返回2以后再去用消息同步接口来获取消息
 func (wc *wechat) SyncCheck() {
-	tick := time.Tick(time.Second * 60)
+	tick := time.Tick(time.Second * 5)
 	for {
 		<-tick
 		params := url.Values{}
@@ -1211,57 +729,9 @@ func (wc *wechat) GetSyncServer() bool {
 | data | JSON |
 | header | ContentType: application/json; charset=UTF-8 |
 | params | { BaseRequest: { Uin: xxx, Sid: xxx, Skey: xxx, DeviceID: xxx }, SyncKey: xxx, rr: `时间戳取反`}
-
-返回数据(JSON):
-```
-{
-	'BaseResponse': {'ErrMsg': '', 'Ret': 0},
-	'SyncKey': {
-		'Count': 7,
-		'List': [
-			{'Val': 636214192, 'Key': 1},
-			...
-		]
-	},
-	'ContinueFlag': 0,
-	'AddMsgCount': 1,
-	'AddMsgList': [
-		{
-			'FromUserName': '',
-			'PlayLength': 0,
-			'RecommendInfo': {...},
-			'Content': "",
-			'StatusNotifyUserName': '',
-			'StatusNotifyCode': 5,
-			'Status': 3,
-			'VoiceLength': 0,
-			'ToUserName': '',
-			'ForwardFlag': 0,
-			'AppMsgType': 0,
-			'AppInfo': {'Type': 0, 'AppID': ''},
-			'Url': '',
-			'ImgStatus': 1,
-			'MsgType': 51,
-			'ImgHeight': 0,
-			'MediaId': '',
-			'FileName': '',
-			'FileSize': '',
-			...
-		},
-		...
-	],
-	'ModChatRoomMemberCount': 0,
-	'ModContactList': [],
-	'DelContactList': [],
-	'ModChatRoomMemberList': [],
-	'DelContactCount': 0,
-	...
-}
 */
-//@liwei: 注意，消息同步过程中synckey在最开始的以后使用init时获取的值。
-//此后每次都要使用最近一次获取的synckey值来进行同步，否则每次获取到的都是从init到目前的消息
 func (wc *wechat) MessageSync() {
-	tick := time.Tick(time.Second * 10)
+	tick := time.Tick(time.Second * 5)
 	for _ = range tick {
 		params := url.Values{}
 		params.Add("skey", wc.BaseRequest.Skey)
@@ -1294,9 +764,8 @@ func (wc *wechat) MessageSync() {
 			log.Println("Error happend when do request: ", err.Error())
 			continue
 		}
+		defer resp.Body.Close()
 		body, _ := ioutil.ReadAll(resp.Body)
-		resp.Body.Close()
-		wc.Cookies = resp.Cookies()
 		//log.Println(string(body))
 		wc.SaveToFile("MessageSyncResponseBody.json", body)
 
@@ -1307,13 +776,18 @@ func (wc *wechat) MessageSync() {
 			continue
 		}
 
-		//@liwei: We need to carefully handle the message
 		//log.Println(ms)
+
+		//@liwei: This is necessary for only get the latest message.
+		wc.SyncKey = &ms.SyncKey
+
 		save, _ := json.Marshal(ms)
 		wc.SaveToFile("MessageSyncResponse.json", save)
 
+		wc.Cookies = resp.Cookies()
 		wc.Cookie = make(map[string]string, len(wc.Cookies))
 		for _, c := range wc.Cookies {
+			log.Println("++++++++++++++++++:", c.Name, "--->", c.Value, "++++++++++++++++++++")
 			wc.Cookie[c.Name] = c.Value
 		}
 		cookie, err := json.Marshal(wc.Cookies)
@@ -1321,9 +795,6 @@ func (wc *wechat) MessageSync() {
 			log.Println("Unable to encoding cookies: ", err.Error())
 			continue
 		}
-
-		//@liwei: We Must Update the SyncKey everytime. With this we can just get the recent message.
-		wc.SyncKey = &ms.SyncKey
 		wc.SaveToFile("Cookies.json", cookie)
 
 		cache, _ := json.Marshal(wc)
@@ -1332,66 +803,9 @@ func (wc *wechat) MessageSync() {
 		for _, msg := range ms.AddMsgList {
 			log.Println("ReceivedNewMessage from: ", wc.ContactDBUserName[msg.FromUserName].NickName, " type: ", msg.MsgType, " content: ", msg.Content)
 		}
+
 	}
 }
-
-/*
-消息一般格式：
-{
-	"FromUserName": "",
-	"ToUserName": "",
-	"Content": "",
-	"StatusNotifyUserName": "",
-	"ImgWidth": 0,
-	"PlayLength": 0,
-	"RecommendInfo": {...},
-	"StatusNotifyCode": 4,
-	"NewMsgId": "",
-	"Status": 3,
-	"VoiceLength": 0,
-	"ForwardFlag": 0,
-	"AppMsgType": 0,
-	"Ticket": "",
-	"AppInfo": {...},
-	"Url": "",
-	"ImgStatus": 1,
-	"MsgType": 1,
-	"ImgHeight": 0,
-	"MediaId": "",
-	"MsgId": "",
-	"FileName": "",
-	"HasProductId": 0,
-	"FileSize": "",
-	"CreateTime": 1454602196,
-	"SubMsgType": 0
-}
-
-*/
-
-/*
-
-| MsgType | 说明 |
-| ------- | --- |
-| 1  | 文本消息 |
-| 3  | 图片消息 |
-| 34 | 语音消息 |
-| 37 | 好友确认消息 |
-| 40 | POSSIBLEFRIEND_MSG |
-| 42 | 共享名片 |
-| 43 | 视频消息 |
-| 47 | 动画表情 |
-| 48 | 位置消息 |
-| 49 | 分享链接 |
-| 50 | VOIPMSG |
-| 51 | 微信初始化消息 |
-| 52 | VOIPNOTIFY |
-| 53 | VOIPINVITE |
-| 62 | 小视频 |
-| 9999 | SYSNOTICE |
-| 10000 | 系统消息 |
-| 10002 | 撤回消息 |
-
-*/
 
 func (wc *wechat) SaveToFile(name string, content []byte) {
 	var file *os.File
@@ -1426,7 +840,7 @@ func (wc *wechat) SaveToFile(name string, content []byte) {
     ClientMsgId: `时间戳` <br> }
 */
 
-//这个函数到底是用来干啥的？ ----> 开启微信状态通知
+//这个函数到底是用来干啥的？
 func (wc *wechat) StatusNotify() {
 	params := url.Values{}
 	params.Add("lang", wc.Lang)
@@ -1927,15 +1341,11 @@ func main() {
 	}
 	wc.GetBaseRequest()
 	wc.WeChatInit()
-	//go wc.SyncCheck()
+	go wc.SyncCheck()
 	wc.StatusNotify()
 	wc.GetContactList()
 	wc.GetGroupMemberList()
 	// wc.GetSyncServer()
 	wc.SendTextMessage()
 	wc.MessageSync()
-}
-
-func init() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
 }
