@@ -21,3 +21,8 @@ POST
 https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxupdatechatroom?fun=addmember&pass_ticket=“pass_ticket”
 POST格式：
 {"AddMemberList":"UserName1","ChatRoomName":"@@ChatRoomName","BaseRequest":{"Uin":Uin,"Sid":"Sid","Skey":"Skey","DeviceID":"DeviceID"}}
+
+
+
+#tips 
+1. 不同的微信号登录域名是不一样的，有的微信号用wx.qq.com, 还有的账号用wx2.qq.com之类的域名。具体以初始化时返回的链接为准。
