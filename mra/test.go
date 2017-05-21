@@ -454,10 +454,6 @@ type Response struct {
 	BaseResponse *BaseResponse `json:"BaseResponse"`
 }
 
-type MsgResp struct {
-	Response
-}
-
 type BaseResponse struct {
 	Ret    int
 	ErrMsg string
