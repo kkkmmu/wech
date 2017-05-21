@@ -11,8 +11,13 @@ import (
 	"bytes"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"net/http/cookiejar"
+	"sync/atomic"
+
+	filetype "gopkg.in/h2non/filetype.v1"
+	//"gopkg.in/h2non/filetype.v1/types"
 	//"net/http/httputil"
 	"net/url"
 	"os"
@@ -49,6 +54,8 @@ type wechat struct {
 	ContactDBNickName map[string]Member `json:"ContactDBNickName"`
 	ContactDBUserName map[string]Member `json:"ContactDBUserName"`
 	Cookies           []*http.Cookie    `json:"Cookies"`
+	Cookie            map[string]string
+	MediaCount        uint32
 }
 
 type Cache struct {
@@ -173,9 +180,9 @@ type CommonReqBody struct {
 	ToUserName         string
 	ClientMsgId        int64
 	ClientMediaId      int
-	TotalLen           int
+	TotalLen           string
 	StartPos           int
-	DataLen            int
+	DataLen            string
 	MediaType          int
 	Scene              int
 	Count              int
@@ -435,6 +442,14 @@ type GetContactListResponse struct {
 	Seq          float64      `json:"Seq"`
 }
 
+type UploadMediaResponse struct {
+	BaseResponse      BaseResponse `json:"BaseResponse"`
+	MediaID           string       `json:"MediaID"`
+	StartPos          int          `json:"StartPos"`
+	CDNThumbImgHeight int          `json:"CDNThumbImgHeight"`
+	CDNThumbImgWidth  int          `json:"CDNThumbImgWidth"`
+}
+
 type Response struct {
 	BaseResponse *BaseResponse `json:"BaseResponse"`
 }
@@ -544,6 +559,12 @@ func (wc *wechat) FastLogin() error {
 	log.Println(wc)
 	wc.client.Jar.SetCookies(u, wc.Cookies)
 	return nil
+}
+
+func (wc *wechat) SetReqCookies(req *http.Request) {
+	for _, c := range wc.Cookies {
+		req.AddCookie(c)
+	}
 }
 
 //| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxpushloginurl |
@@ -1119,11 +1140,24 @@ func (wc *wechat) SyncCheck() {
 			return
 		}
 
+		//selector = 2 menas new message
 		log.Println("++++++++++++++++++++++++++++++++++++++++++++++++")
 		//log.Println(string(data))
 		//log.Println(resp.Cookies())
 		wc.SaveToFile("SyncCheckResponse.txt", data)
+		log.Println(wc.Cookie)
 		log.Println("++++++++++++++++++++++++++++++++++++++++++++++++")
+
+		if _, ok := wc.Cookie["webwx_data_ticket"]; ok {
+			id, err := wc.UploadMedia("./asset/4.gif", "cp4")
+			if err != nil {
+				continue
+			}
+
+			//wc.SendImageMessage(wc.ContactDBNickName["cp4"].UserName, id)
+			wc.SendEmotionMessage(wc.ContactDBNickName["cp4"].UserName, id)
+			break
+		}
 	}
 }
 
@@ -1249,7 +1283,7 @@ func (wc *wechat) MessageSync() {
 		}
 		defer resp.Body.Close()
 		body, _ := ioutil.ReadAll(resp.Body)
-		log.Println(string(body))
+		//log.Println(string(body))
 		wc.SaveToFile("MessageSyncResponseBody.json", body)
 
 		reader := bytes.NewReader(body)
@@ -1264,6 +1298,11 @@ func (wc *wechat) MessageSync() {
 		wc.SaveToFile("MessageSyncResponse.json", save)
 
 		wc.Cookies = resp.Cookies()
+		wc.Cookie = make(map[string]string, len(wc.Cookies))
+		for _, c := range wc.Cookies {
+			log.Println("++++++++++++++++++:", c.Name, "--->", c.Value, "++++++++++++++++++++")
+			wc.Cookie[c.Name] = c.Value
+		}
 		cookie, err := json.Marshal(wc.Cookies)
 		if err != nil {
 			log.Println("Unable to encoding cookies: ", err.Error())
@@ -1277,6 +1316,7 @@ func (wc *wechat) MessageSync() {
 		for _, msg := range ms.AddMsgList {
 			log.Println("ReceivedNewMessage from: ", wc.ContactDBUserName[msg.FromUserName].NickName, " type: ", msg.MsgType, " content: ", msg.Content)
 		}
+
 	}
 }
 
@@ -1341,7 +1381,7 @@ func (wc *wechat) MessageSync() {
 func (wc *wechat) SaveToFile(name string, content []byte) {
 	var file *os.File
 
-	file, err := os.Create(name)
+	file, err := os.Create("./asset/" + name)
 	if err != nil {
 		log.Println("Cannot open/create file: ", err.Error())
 		return
@@ -1519,8 +1559,242 @@ func (wc *wechat) SendTextMessage() {
 		}
 	  }
 */
-func (wc *wechat) SendEmotionMessage() {
+func (wc *wechat) SendEmotionMessage(to, id string) {
+	params := url.Values{}
+	//params.Add("pass_ticket", wc.BaseRequest.PassTicket)
+	params.Add("fun", "sys")
+	params.Add("lang", wc.Lang)
 
+	uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsendemoticon?" + params.Encode()
+
+	data, err := json.Marshal(CommonReqBody{
+		BaseRequest: wc.BaseRequest,
+		Msg: EmotionMessage{
+			Type:         47,
+			EmojiFlag:    2,
+			FromUserName: wc.UserName,
+			ToUserName:   wc.ContactDBNickName["cp4"].UserName,
+			LocalID:      int64(time.Now().Unix() * 1e4),
+			ClientMsgId:  int64(time.Now().Unix() * 1e4),
+			MediaId:      id,
+		},
+		Scene: 0,
+	})
+
+	log.Println(wc.ContactDBNickName)
+	log.Println("Sending message from: ", wc.UserName, " to ", wc.ContactDBNickName["cp4"].UserName)
+	if err != nil {
+		log.Println("Error happend when marshal: ", err.Error())
+		return
+	}
+
+	req, err := http.NewRequest("POST", uri, bytes.NewReader(data))
+	if err != nil {
+		log.Println("Error happend when create http request: ", err.Error())
+		return
+	}
+	req.Header.Add("Content-Type", "application/json; charset=UTF-8")
+	req.Header.Add("User-Agent", wc.userAgent)
+	wc.SetReqCookies(req)
+
+	resp, err := wc.client.Do(req)
+	if err != nil {
+		log.Println("Error happend when do request: ", err.Error())
+		return
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	//log.Println(string(body))
+	wc.SaveToFile("SendEmotionMessageResponseBody.json", body)
+}
+
+func (wc *wechat) SendImageMessage(to, id string) {
+	params := url.Values{}
+	params.Add("pass_ticket", wc.BaseRequest.PassTicket)
+	params.Add("fun", "async")
+	params.Add("f", "json")
+	params.Add("lang", wc.Lang)
+
+	log.Println("++==", id, "==++")
+	uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsgimg?" + params.Encode()
+
+	data, err := json.Marshal(CommonReqBody{
+		BaseRequest: wc.BaseRequest,
+		Msg: MediaMessage{
+			Type:         3,
+			Content:      "",
+			FromUserName: wc.UserName,
+			ToUserName:   to,
+			LocalID:      int64(time.Now().Unix() * 1e4),
+			ClientMsgId:  int64(time.Now().Unix() * 1e4),
+			MediaId:      id,
+		},
+		Scene: 0,
+	})
+
+	log.Println(wc.ContactDBUserName[wc.UserName].NickName)
+	log.Println(wc.ContactDBNickName["cp4"].NickName)
+	log.Println(string(data))
+	log.Println("Sending message from: ", wc.UserName, " to ", wc.ContactDBNickName["cp4"].UserName)
+	if err != nil {
+		log.Println("Error happend when marshal: ", err.Error())
+		return
+	}
+
+	req, err := http.NewRequest("POST", uri, bytes.NewReader(data))
+	if err != nil {
+		log.Println("Error happend when create http request: ", err.Error())
+		return
+	}
+	req.Header.Add("Content-Type", "application/json; charset=UTF-8")
+	req.Header.Add("User-Agent", wc.userAgent)
+	wc.SetReqCookies(req)
+
+	resp, err := wc.client.Do(req)
+	if err != nil {
+		log.Println("Error happend when do request: ", err.Error())
+		return
+	}
+
+	log.Println(resp.Status)
+	log.Println(resp.StatusCode)
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	//log.Println(string(body))
+	wc.SaveToFile("SendImageMessageResponseBody.json", body)
+}
+
+//"https://file.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json"
+//https://file.'+self.base_host+'/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json'
+//https://file2.'+self.base_host+'/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json'
+
+/*
+	if filetype.IsImage(buf) {
+		if strings.HasSuffix(kind.MIME.Value, `gif`) {
+			msg = messages.NewEmoticonMsgMsg(media, to)
+		} else {
+			msg = messages.NewImageMsg(media, to)
+		}
+	} else {
+		info, _ := os.Stat(filepath)
+		if filetype.IsVideo(buf) {
+			msg = messages.NewVideoMsg(media, to)
+		} else {
+			msg = messages.NewFileMsg(media, to, info.Name(), kind.Extension)
+		}
+	}
+*/
+
+func (wc *wechat) UploadMedia(name, to string) (string, error) {
+	//func (wc *weChat) UploadMedia(buf []byte, kind types.Type, info os.FileInfo, to string) (string, error) {
+	file, err := os.Stat(name)
+	if err != nil {
+		return "", err
+	}
+
+	buf, err := ioutil.ReadFile(name)
+	if err != nil {
+		return "", err
+	}
+	kind, _ := filetype.Get(buf)
+
+	var mediatype string
+	if filetype.IsImage(buf) {
+		mediatype = `pic`
+	} else if filetype.IsVideo(buf) {
+		mediatype = `video`
+	} else {
+		mediatype = `doc`
+	}
+
+	/* //@liwei: How to  get teh data ticket
+	for _, v := range cookies {
+		if strings.Contains(v.String(), "webwx_data_ticket") {
+			_, _ = fw.Write([]byte(strings.Split(v.String(), "=")[1]))
+			break
+		}
+	}
+	*/
+
+	wc.MediaCount = atomic.AddUint32(&wc.MediaCount, 1)
+	fields := map[string]string{
+		`id`:                `WU_FILE_` + strconv.Itoa(int(wc.MediaCount)), //@liwei
+		`name`:              file.Name(),
+		`type`:              kind.MIME.Value,
+		`lastModifiedDate`:  file.ModTime().UTC().String(),
+		`size`:              strconv.FormatInt(file.Size(), 10),
+		`mediatype`:         mediatype,
+		`pass_ticket`:       wc.BaseRequest.PassTicket,
+		`webwx_data_ticket`: wc.Cookie["webwx_data_ticket"],
+	}
+
+	log.Println("===================================UploadMesasage=====================")
+	log.Println(fields)
+
+	buffer := &bytes.Buffer{}
+	writer := multipart.NewWriter(buffer)
+
+	fw, err := writer.CreateFormFile(`filename`, file.Name())
+	if err != nil {
+		return "", err
+	}
+	fw.Write(buf)
+
+	for k, v := range fields {
+		writer.WriteField(k, v)
+	}
+
+	data, err := json.Marshal(CommonReqBody{
+		BaseRequest:   wc.BaseRequest,
+		ClientMediaId: int(time.Now().Unix() * 1e4),
+		TotalLen:      strconv.FormatInt(file.Size(), 10),
+		StartPos:      0,
+		DataLen:       strconv.FormatInt(file.Size(), 10),
+		//UploadType:    2,
+		MediaType:    4,
+		ToUserName:   "cp4",
+		FromUserName: wc.UserName,
+		//FileMd5:       string(md5.New().Sum(buf)),
+	})
+
+	writer.WriteField(`uploadmediarequest`, string(data))
+	writer.Close()
+
+	//req, err := http.NewRequest("POST", "https://file.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json", buffer)
+	req, err := http.NewRequest("POST", "https://file2.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json", buffer)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+	req.Header.Add("User-Agent", wc.userAgent)
+
+	wc.SetReqCookies(req)
+	/*
+		jar, _ := cookiejar.New(nil)
+		u, _ := url.Parse("https://file2.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json")
+		jar.SetCookies(u, wc.Cookies)
+		client := &http.Client{Jar: jar}
+		//client := &http.Client{}
+	*/
+	resp, err := wc.client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	log.Println(string(body))
+
+	reader := bytes.NewReader(body)
+	var result UploadMediaResponse
+	if err = json.NewDecoder(reader).Decode(&result); err != nil {
+		log.Println("Error happened when decode Response information: ", err.Error())
+		return "", errors.New("Cannot decode")
+	}
+
+	save, _ := json.Marshal(result)
+	wc.SaveToFile("UploadMediaResponse.json", save)
+	return result.MediaID, nil
 }
 
 /*
@@ -1623,7 +1897,7 @@ func main() {
 			Jar: jar,
 		},
 		login:       make(chan bool),
-		cacheName:   "Cache.json",
+		cacheName:   "asset/Cache.json",
 		BaseRequest: &BaseRequest{},
 		DeviceID:    "0x1234567890",
 		userAgent:   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36",
