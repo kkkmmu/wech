@@ -80,6 +80,38 @@ type Message struct {
 	OriContent           string        `json:"OriContent"`
 }
 
+func (msg *Message) IsTextMessage() bool {
+	return msg.MsgType == TEXT
+}
+
+func (msg *Message) IsVoiceMessage() bool {
+	return msg.MsgType == VOICE
+}
+
+func (msg *Message) IsVideoMessage() bool {
+	return msg.MsgType == VIDEO
+}
+
+func (msg *Message) IsEmojiMessage() bool {
+	return msg.MsgType == EMOJI
+}
+
+func (msg *Message) IsInitMessage() bool {
+	return msg.MsgType == INIT
+}
+
+func (msg *Message) GetContent() string {
+	return msg.Content
+}
+
+func (msg *Message) From() string {
+	return msg.FromUserName
+}
+
+func (msg *Message) To() string {
+	return msg.ToUserName
+}
+
 type TextMessage struct {
 	Type         int
 	Content      string

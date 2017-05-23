@@ -1603,6 +1603,50 @@ func (wc *WeChat) SendTextMessage(from, to, msg string) {
 	wc.DB.Save("SendTextMessageResponseBody.json", body)
 }
 
+func (wc *WeChat) SendShareLinkMessage(from, to, msg string) {
+	params := url.Values{}
+	params.Add("pass_ticket", wc.BaseRequest.PassTicket)
+
+	uri := wc.BaseURL + wc.APIPath + "webwxsendmsg?" + params.Encode()
+
+	data, err := json.Marshal(CommonReqBody{
+		BaseRequest: wc.BaseRequest,
+		Msg: message.TextMessage{
+			Type:         49,
+			Content:      msg,
+			FromUserName: from,
+			ToUserName:   to,
+			LocalID:      int64(time.Now().Unix() * 1e4),
+			ClientMsgId:  int64(time.Now().Unix() * 1e4),
+		},
+	})
+
+	log.Println("Sending message from: ", wc.UserName, " to ", to)
+	if err != nil {
+		log.Println("Error happend when marshal: ", err.Error())
+		return
+	}
+
+	req, err := http.NewRequest("POST", uri, bytes.NewReader(data))
+	if err != nil {
+		log.Println("Error happend when create http request: ", err.Error())
+		return
+	}
+	req.Header.Add("Content-Type", "application/json; charset=UTF-8")
+	req.Header.Add("User-Agent", wc.UserAgent)
+
+	resp, err := wc.client.Do(req)
+	if err != nil {
+		log.Println("Error happend when do request: ", err.Error())
+		return
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	//log.Println(string(body))
+	wc.DB.Save("SendTextMessageResponseBody.json", body)
+}
+
 /*
 | API | webwxsendmsgemotion |
 | --- | ------------ |
@@ -1940,13 +1984,11 @@ func (wc *WeChat) registerDefaultPlugin() {
 }
 
 func (wc *WeChat) RegisterPlugin(p *Plugin) {
-	if _, ok := wc.plugins[p.msgType]; ok {
-		wc.plugins[p.msgType] = append(wc.plugins[p.msgType], p)
-		return
+	if _, ok := wc.plugins[p.msgType]; !ok {
+		wc.plugins[p.msgType] = make([]*Plugin, 0, 1)
 	}
 
 	log.Println(p.msgType)
-	wc.plugins[p.msgType] = make([]*Plugin, 0, 1)
 	wc.plugins[p.msgType] = append(wc.plugins[p.msgType], p)
 	return
 }
