@@ -1,0 +1,168 @@
+{
+"BaseResponse": {
+"Ret": 0,
+"ErrMsg": ""
+}
+,
+"AddMsgCount": 1,
+"AddMsgList": [{
+"MsgId": "8689302025820787459",
+"FromUserName": "@3e6be0f4508fe56d2b9b03743e209d31",
+"ToUserName": "@07dfd1faf1bab3bdd99b2b52b057a379",
+"MsgType": 49,
+"Content": "&lt;msg&gt;<br/>    &lt;appmsg appid=\"\" sdkver=\"0\"&gt;<br/>        &lt;title&gt;&lt;![CDATA[江西老表在非洲称王！领导6000黑人干成“非洲版富士康”，还赚了Gucci的钱，厉害了！]]&gt;&lt;/title&gt;<br/>        &lt;des&gt;&lt;![CDATA[来源：创日报（ID：chuangribao)  作者：Cecilia前几天，一段6000名非洲女工齐唱《团结]]&gt;&lt;/des&gt;<br/>        &lt;action&gt;&lt;/action&gt;<br/>        &lt;type&gt;5&lt;/type&gt;<br/>        &lt;showtype&gt;1&lt;/showtype&gt;<br/>        &lt;content&gt;&lt;![CDATA[]]&gt;&lt;/content&gt;<br/>        &lt;contentattr&gt;0&lt;/contentattr&gt;<br/>        &lt;url&gt;&lt;![CDATA[http://mp.weixin.qq.com/s?__biz=MjM5ODk3MTI3MQ==&amp;mid=2653839879&amp;idx=1&amp;sn=59ebf19f78ccfe25548b5868224c9688&amp;chksm=bd1850ef8a6fd9f99f32d3087adb9b8e05f048e1d848364b972ca551446947f0c4a431a81e33&amp;scene=0#rd]]&gt;&lt;/url&gt;<br/>        &lt;lowurl&gt;&lt;![CDATA[]]&gt;&lt;/lowurl&gt;<br/>        &lt;appattach&gt;<br/>            &lt;totallen&gt;0&lt;/totallen&gt;<br/>            &lt;attachid&gt;&lt;/attachid&gt;<br/>            &lt;fileext&gt;&lt;/fileext&gt;<br/>        &lt;/appattach&gt;<br/>        &lt;extinfo&gt;&lt;/extinfo&gt;<br/>        &lt;mmreader&gt;<br/>            &lt;category type=\"20\" count=\"5\"&gt;<br/>                &lt;name&gt;&lt;![CDATA[京东精选股]]&gt;&lt;/name&gt;<br/>                &lt;topnew&gt;<br/>                    &lt;cover&gt;&lt;![CDATA[http://mmbiz.qpic.cn/mmbiz_png/MXIQ29fKYME8MaCiaateTZrVeIKAVDczcYreI5giasxYC8V9wOFwVEsycs98lMDvE8Nmsn30H7fNGRo79YB4QeQw/640?wx_fmt=png&amp;wxtype=png&amp;wxfrom=0]]&gt;&lt;/cover&gt;<br/>                    &lt;width&gt;0&lt;/width&gt;<br/>                    &lt;height&gt;0&lt;/height&gt;<br/>                    &lt;digest&gt;&lt;![CDATA[]]&gt;&lt;/digest&gt;<br/>                &lt;/topnew&gt;<br/>                <br/>                &lt;item&gt;<br/>                    &lt;itemshowtype&gt;0&lt;/itemshowtype&gt;<br/>                    &lt;title&gt;&lt;![CDATA[江西老表在非洲称王！领导6000黑人干成“非洲版富士康”，还赚了Gucci的钱，厉害了！]]&gt;&lt;/title&gt;<br/>                    &lt;url&gt;&lt;![CDATA[http://mp.weixin.qq.com/s?__biz=MjM5ODk3MTI3MQ==&amp;mid=2653839879&amp;idx=1&amp;sn=59ebf19f78ccfe25548b5868224c9688&amp;chksm=bd1850ef8a6fd9f99f32d3087adb9b8e05f048e1d848364b972ca551446947f0c4a431a81e33&amp;scene=0#rd]]&gt;&lt;/url&gt;<br/>                    &lt;shorturl&gt;&lt;![CDATA[]]&gt;&lt;/shorturl&gt;<br/>                    &lt;longurl&gt;&lt;![CDATA[]]&gt;&lt;/longurl&gt;<br/>                    &lt;pub_time&gt;1495627153&lt;/pub_time&gt;<br/>                    &lt;cover&gt;&lt;![CDATA[http://mmbiz.qpic.cn/mmbiz_png/MXIQ29fKYME8MaCiaateTZrVeIKAVDczcYreI5giasxYC8V9wOFwVEsycs98lMDvE8Nmsn30H7fNGRo79YB4QeQw/640?wx_fmt=png&amp;wxtype=png&amp;wxfrom=0]]&gt;&lt;/cover&gt;<br/>                    &lt;tweetid&gt;&lt;/tweetid&gt;<br/>                    &lt;digest&gt;&lt;![CDATA[来源：创日报（ID：chuangribao)  作者：Cecilia前几天，一段6000名非洲女工齐唱《团结]]&gt;&lt;/digest&gt;<br/>                    &lt;fileid&gt;0&lt;/fileid&gt;<br/>                    &lt;sources&gt;<br/>                        &lt;source&gt;<br/>                            &lt;name&gt;&lt;![CDATA[京东精选股]]&gt;&lt;/name&gt;<br/>                        &lt;/source&gt;<br/>                    &lt;/sources&gt;<br/>                    &lt;styles&gt;&lt;/styles&gt;<br/>                    &lt;native_url&gt;&lt;/native_url&gt;<br/>                    &lt;del_flag&gt;0&lt;/del_flag&gt;<br/>                    &lt;contentattr&gt;0&lt;/contentattr&gt;<br/>                    &lt;play_length&gt;0&lt;/play_length&gt;<br/>                &lt;/item&gt;<br/>                <br/>                &lt;item&gt;<br/>                    &lt;itemshowtype&gt;0&lt;/itemshowtype&gt;<br/>                    &lt;title&gt;&lt;![CDATA[“我实在想看看苹果到底敢不敢下架微信”]]&gt;&lt;/title&gt;<br/>                    &lt;url&gt;&lt;![CDATA[http://mp.weixin.qq.com/s?__biz=MjM5ODk3MTI3MQ==&amp;mid=2653839879&amp;idx=2&amp;sn=a67ec5ee4280ecf9dc13da0ecfa7c8d5&amp;chksm=bd1850ef8a6fd9f9b776b849e917499b3352bc3b8b70b6e6f8353aeb811c639d64de0b97e117&amp;scene=0#rd]]&gt;&lt;/url&gt;<br/>                    &lt;shorturl&gt;&lt;![CDATA[]]&gt;&lt;/shorturl&gt;<br/>                    &lt;longurl&gt;&lt;![CDATA[]]&gt;&lt;/longurl&gt;<br/>                    &lt;pub_time&gt;1495627153&lt;/pub_time&gt;<br/>                    &lt;cover&gt;&lt;![CDATA[http://mmbiz.qpic.cn/mmbiz/zxjarWG9c3gQ2ZiarqR10Zn6WSSIdbqkcsPvdYoicaY73vkWmHHYcoSU2NFRZlpFJoS2puTjmlTUWs7wKoxI1UBw/s640?wxfrom=0]]&gt;&lt;/cover&gt;<br/>                    &lt;tweetid&gt;&lt;/tweetid&gt;<br/>                    &lt;digest&gt;&lt;![CDATA[文章经授权转载自 创业邦杂志（ID：ichuangyebang）作者：浅夏苹果展开对微信打赏的扒皮，是从上个]]&gt;&lt;/digest&gt;<br/>                    &lt;fileid&gt;506353350&lt;/fileid&gt;<br/>                    &lt;sources&gt;<br/>                        &lt;source&gt;<br/>                            &lt;name&gt;&lt;![CDATA[京东精选股]]&gt;&lt;/name&gt;<br/>                        &lt;/source&gt;<br/>                    &lt;/sources&gt;<br/>                    &lt;styles&gt;&lt;/styles&gt;<br/>                    &lt;native_url&gt;&lt;/native_url&gt;<br/>                    &lt;del_flag&gt;0&lt;/del_flag&gt;<br/>                    &lt;contentattr&gt;0&lt;/contentattr&gt;<br/>                    &lt;play_length&gt;0&lt;/play_length&gt;<br/>                &lt;/item&gt;<br/>                <br/>                &lt;item&gt;<br/>                    &lt;itemshowtype&gt;0&lt;/itemshowtype&gt;<br/>                    &lt;title&gt;&lt;![CDATA[那些不起眼却非常赚钱的行业，利润最高咱们却不知道！]]&gt;&lt;/title&gt;<br/>                    &lt;url&gt;&lt;![CDATA[http://mp.weixin.qq.com/s?__biz=MjM5ODk3MTI3MQ==&amp;mid=2653839879&amp;idx=3&amp;sn=077261ee381a13280afe8d15baef2cae&amp;chksm=bd1850ef8a6fd9f92b410855797891c9e751cad5cac81962e03b6a6b8705770f60c8e4777b37&amp;scene=0#rd]]&gt;&lt;/url&gt;<br/>                    &lt;shorturl&gt;&lt;![CDATA[]]&gt;&lt;/shorturl&gt;<br/>                    &lt;longurl&gt;&lt;![CDATA[]]&gt;&lt;/longurl&gt;<br/>                    &lt;pub_time&gt;1495627153&lt;/pub_time&gt;<br/>                    &lt;cover&gt;&lt;![CDATA[http://mmbiz.qpic.cn/mmbiz/zxjarWG9c3jKqQgnafTDXiaCCHm6Zqn0BD7cvIQhSAxic5ibYPSQX3HrFITQa17icFjxwdIicZQPL2IBDFEyZglzdQg/s640?wxfrom=0]]&gt;&lt;/cover&gt;<br/>                    &lt;tweetid&gt;&lt;/tweetid&gt;<br/>                    &lt;digest&gt;&lt;![CDATA[标题说赚钱应该是利润率高，不是营业收入或者利润绝对值。投入1000万一年赚10万那不叫赚钱。1、手机贴膜。首]]&gt;&lt;/digest&gt;<br/>                    &lt;fileid&gt;506353318&lt;/fileid&gt;<br/>                    &lt;sources&gt;<br/>                        &lt;source&gt;<br/>                            &lt;name&gt;&lt;![CDATA[京东精选股]]&gt;&lt;/name&gt;<br/>                        &lt;/source&gt;<br/>                    &lt;/sources&gt;<br/>                    &lt;styles&gt;&lt;/styles&gt;<br/>                    &lt;native_url&gt;&lt;/native_url&gt;<br/>                    &lt;del_flag&gt;0&lt;/del_flag&gt;<br/>                    &lt;contentattr&gt;0&lt;/contentattr&gt;<br/>                    &lt;play_length&gt;0&lt;/play_length&gt;<br/>                &lt;/item&gt;<br/>                <br/>                &lt;item&gt;<br/>                    &lt;itemshowtype&gt;0&lt;/itemshowtype&gt;<br/>                    &lt;title&gt;&lt;![CDATA[【复盘笔记】都被这根深V大阳线吓尿了吧]]&gt;&lt;/title&gt;<br/>                    &lt;url&gt;&lt;![CDATA[http://mp.weixin.qq.com/s?__biz=MjM5ODk3MTI3MQ==&amp;mid=2653839879&amp;idx=4&amp;sn=1875be0d06714192a62f239f9d5d0455&amp;chksm=bd1850ef8a6fd9f932de308dbe8934ecb12d18eec858093df526999ae8dbcd941e7f89e033a2&amp;scene=0#rd]]&gt;&lt;/url&gt;<br/>                    &lt;shorturl&gt;&lt;![CDATA[]]&gt;&lt;/shorturl&gt;<br/>                    &lt;longurl&gt;&lt;![CDATA[]]&gt;&lt;/longurl&gt;<br/>                    &lt;pub_time&gt;1495627153&lt;/pub_time&gt;<br/>                    &lt;cover&gt;&lt;![CDATA[http://mmbiz.qpic.cn/mmbiz/zxjarWG9c3jjMGTMrt3VnoXMy7kRqMRiaEUYKaOEdG07qTJt76SlW2pAnIiahvMfyvvXiaBqWMnRq1icvD6ibBaYAPA/s640?wxfrom=0]]&gt;&lt;/cover&gt;<br/>                    &lt;tweetid&gt;&lt;/tweetid&gt;<br/>                    &lt;digest&gt;&lt;![CDATA[4]]&gt;&lt;/digest&gt;<br/>                    &lt;fileid&gt;506353419&lt;/fileid&gt;<br/>                    &lt;sources&gt;<br/>                        &lt;source&gt;<br/>                            &lt;name&gt;&lt;![CDATA[京东精选股]]&gt;&lt;/name&gt;<br/>                        &lt;/source&gt;<br/>                    &lt;/sources&gt;<br/>                    &lt;styles&gt;&lt;/styles&gt;<br/>                    &lt;native_url&gt;&lt;/native_url&gt;<br/>                    &lt;del_flag&gt;0&lt;/del_flag&gt;<br/>                    &lt;contentattr&gt;0&lt;/contentattr&gt;<br/>                    &lt;play_length&gt;0&lt;/play_length&gt;<br/>                &lt;/item&gt;<br/>                <br/>                &lt;item&gt;<br/>                    &lt;itemshowtype&gt;0&lt;/itemshowtype&gt;<br/>                    &lt;title&gt;&lt;![CDATA[重磅福利来袭丨精打细算，我看好你哟！]]&gt;&lt;/title&gt;<br/>                    &lt;url&gt;&lt;![CDATA[http://mp.weixin.qq.com/s?__biz=MjM5ODk3MTI3MQ==&amp;mid=2653839879&amp;idx=5&amp;sn=6f59289172f2a9f95d549dfd36506f41&amp;chksm=bd1850ef8a6fd9f996d2727c1db0cf38fd114ed8cc3ac2420fd941a7ea6fe7f34cfa4cea34d6&amp;scene=0#rd]]&gt;&lt;/url&gt;<br/>                    &lt;shorturl&gt;&lt;![CDATA[]]&gt;&lt;/shorturl&gt;<br/>                    &lt;longurl&gt;&lt;![CDATA[]]&gt;&lt;/longurl&gt;<br/>                    &lt;pub_time&gt;1495627153&lt;/pub_time&gt;<br/>                    &lt;cover&gt;&lt;![CDATA[http://mmbiz.qpic.cn/mmbiz_jpg/zxjarWG9c3hc1aic4HXjCibdZHJc0CmIaIBQXHNMgj7WqNClIgkZFZBibNepib0Hj2KmsDgTnBaKdicichfE7Pm6Ujog/300?wxtype=jpeg&amp;wxfrom=0]]&gt;&lt;/cover&gt;<br/>                    &lt;tweetid&gt;&lt;/tweetid&gt;<br/>                    &lt;digest&gt;&lt;![CDATA[老婆：老公啊，现在物价太高了，我们过日子，真的要精打细算了……老公：是啊，你看我，什么都不敢买了，连香烟都戒]]&gt;&lt;/digest&gt;<br/>                    &lt;fileid&gt;506355274&lt;/fileid&gt;<br/>                    &lt;sources&gt;<br/>                        &lt;source&gt;<br/>                            &lt;name&gt;&lt;![CDATA[京东精选股]]&gt;&lt;/name&gt;<br/>                        &lt;/source&gt;<br/>                    &lt;/sources&gt;<br/>                    &lt;styles&gt;&lt;/styles&gt;<br/>                    &lt;native_url&gt;&lt;/native_url&gt;<br/>                    &lt;del_flag&gt;0&lt;/del_flag&gt;<br/>                    &lt;contentattr&gt;0&lt;/contentattr&gt;<br/>                    &lt;play_length&gt;0&lt;/play_length&gt;<br/>                &lt;/item&gt;<br/>                <br/>            &lt;/category&gt;<br/>            &lt;publisher&gt;<br/>                &lt;username&gt;&lt;![CDATA[gh_cbe98f841252]]&gt;&lt;/username&gt;<br/>                &lt;nickname&gt;&lt;![CDATA[京东精选股]]&gt;&lt;/nickname&gt;<br/>            &lt;/publisher&gt;<br/>            &lt;template_header&gt;&lt;/template_header&gt;<br/>            &lt;template_detail&gt;&lt;/template_detail&gt;<br/>            &lt;forbid_forward&gt;0&lt;/forbid_forward&gt;<br/>        &lt;/mmreader&gt;<br/>        &lt;thumburl&gt;&lt;![CDATA[http://mmbiz.qpic.cn/mmbiz_png/MXIQ29fKYME8MaCiaateTZrVeIKAVDczcYreI5giasxYC8V9wOFwVEsycs98lMDvE8Nmsn30H7fNGRo79YB4QeQw/640?wx_fmt=png&amp;wxtype=png&amp;wxfrom=0]]&gt;&lt;/thumburl&gt;<br/>    &lt;/appmsg&gt;<br/>    &lt;fromusername&gt;&lt;![CDATA[gh_cbe98f841252]]&gt;&lt;/fromusername&gt;<br/>    &lt;appinfo&gt;<br/>        &lt;version&gt;&lt;/version&gt;<br/>        &lt;appname&gt;&lt;![CDATA[京东精选股]]&gt;&lt;/appname&gt;<br/>        &lt;isforceupdate&gt;1&lt;/isforceupdate&gt;<br/>    &lt;/appinfo&gt;<br/>    <br/>    <br/>    <br/>    <br/>    <br/>    <br/>&lt;/msg&gt;",
+"Status": 3,
+"ImgStatus": 1,
+"CreateTime": 1495627233,
+"VoiceLength": 0,
+"PlayLength": 0,
+"FileName": "江西老表在非洲称王！领导6000黑人干成“非洲版富士康”，还赚了Gucci的钱，厉害了！",
+"FileSize": "0",
+"MediaId": "",
+"Url": "http://mp.weixin.qq.com/s?__biz=MjM5ODk3MTI3MQ==&amp;mid=2653839879&amp;idx=1&amp;sn=59ebf19f78ccfe25548b5868224c9688&amp;chksm=bd1850ef8a6fd9f99f32d3087adb9b8e05f048e1d848364b972ca551446947f0c4a431a81e33&amp;scene=0#rd",
+"AppMsgType": 5,
+"StatusNotifyCode": 0,
+"StatusNotifyUserName": "",
+"RecommendInfo": {
+"UserName": "",
+"NickName": "",
+"QQNum": 0,
+"Province": "",
+"City": "",
+"Content": "",
+"Signature": "",
+"Alias": "",
+"Scene": 0,
+"VerifyFlag": 0,
+"AttrStatus": 0,
+"Sex": 0,
+"Ticket": "",
+"OpCode": 0
+}
+,
+"ForwardFlag": 0,
+"AppInfo": {
+"AppID": "",
+"Type": 0
+}
+,
+"HasProductId": 0,
+"Ticket": "",
+"ImgHeight": 0,
+"ImgWidth": 0,
+"SubMsgType": 0,
+"NewMsgId": 8689302025820787459,
+"OriContent": ""
+}
+],
+"ModContactCount": 0,
+"ModContactList": [],
+"DelContactCount": 0,
+"DelContactList": [],
+"ModChatRoomMemberCount": 0,
+"ModChatRoomMemberList": [],
+"Profile": {
+"BitFlag": 0,
+"UserName": {
+"Buff": ""
+}
+,
+"NickName": {
+"Buff": ""
+}
+,
+"BindUin": 0,
+"BindEmail": {
+"Buff": ""
+}
+,
+"BindMobile": {
+"Buff": ""
+}
+,
+"Status": 0,
+"Sex": 0,
+"PersonalCard": 0,
+"Alias": "",
+"HeadImgUpdateFlag": 0,
+"HeadImgUrl": "",
+"Signature": ""
+}
+,
+"ContinueFlag": 0,
+"SyncKey": {
+"Count": 8,
+"List": [{
+"Key": 1,
+"Val": 655375707
+}
+,{
+"Key": 2,
+"Val": 655375736
+}
+,{
+"Key": 3,
+"Val": 655375709
+}
+,{
+"Key": 11,
+"Val": 655375614
+}
+,{
+"Key": 13,
+"Val": 655360027
+}
+,{
+"Key": 201,
+"Val": 1495627233
+}
+,{
+"Key": 1000,
+"Val": 1495620361
+}
+,{
+"Key": 1001,
+"Val": 1495620391
+}
+]
+}
+,
+"SKey": "",
+"SyncCheckKey": {
+"Count": 8,
+"List": [{
+"Key": 1,
+"Val": 655375707
+}
+,{
+"Key": 2,
+"Val": 655375736
+}
+,{
+"Key": 3,
+"Val": 655375709
+}
+,{
+"Key": 11,
+"Val": 655375614
+}
+,{
+"Key": 13,
+"Val": 655360027
+}
+,{
+"Key": 201,
+"Val": 1495627233
+}
+,{
+"Key": 1000,
+"Val": 1495620361
+}
+,{
+"Key": 1001,
+"Val": 1495620391
+}
+]
+}
+
+}

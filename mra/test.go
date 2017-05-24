@@ -9,7 +9,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	wc.RegisterPlugin(wechat.BaiKePlugin)
 
 	if err := wc.FastLogin(); err != nil {
 		wc.GetUUID()

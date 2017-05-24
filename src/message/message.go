@@ -26,7 +26,6 @@ const (
 	REVOKE         = 10002 //| 撤回消息 |
 )
 
-var MsgTypeCount = 18
 var MsgType = []int{
 	TEXT,
 	IMAGE,
@@ -46,6 +45,27 @@ var MsgType = []int{
 	SYSNOTICE,
 	SYSTEM,
 	REVOKE,
+}
+
+var Type = map[int]string{
+	TEXT:           "TEXT",
+	IMAGE:          "IMAGE",
+	VOICE:          "VOICE",
+	VERIFY:         "VERIFY",
+	POSSIBLEFRIEND: "POSSIBLEFRIEND",
+	SHAREID:        "SHAREID",
+	VIDEO:          "VIDEO",
+	EMOJI:          "EMOJI",
+	SHAREPOSITION:  "SHAREPOSITION",
+	SHARELINK:      "SHARELINK",
+	VOIP:           "VOIP",
+	INIT:           "INIT",
+	VOIPNOTIFY:     "VOIPNOTIFY",
+	VOIPINVITE:     "VOIPINVITE",
+	SHORTVIDEO:     "SHORTVIDEO",
+	SYSNOTICE:      "SYSNOTICE",
+	SYSTEM:         "SYSTEM",
+	REVOKE:         "REVOKE",
 }
 
 var Away = "本人不在，请电话联系，谢谢"
@@ -80,6 +100,15 @@ type Message struct {
 	OriContent           string        `json:"OriContent"`
 }
 
+func (msg *Message) WTOL() *LocalMessage {
+	return &LocalMessage{
+		fromUserName: msg.FromUserName,
+		toUserName:   msg.ToUserName,
+		msgtype:      msg.MsgType,
+		content:      []byte(msg.Content),
+	}
+}
+
 func (msg *Message) IsTextMessage() bool {
 	return msg.MsgType == TEXT
 }
@@ -100,6 +129,10 @@ func (msg *Message) IsInitMessage() bool {
 	return msg.MsgType == INIT
 }
 
+func (msg *Message) Type() int {
+	return msg.MsgType
+}
+
 func (msg *Message) GetContent() string {
 	return msg.Content
 }
@@ -110,6 +143,14 @@ func (msg *Message) From() string {
 
 func (msg *Message) To() string {
 	return msg.ToUserName
+}
+
+func IsValid(t int) bool {
+	if _, ok := Type[t]; ok {
+		return true
+	}
+
+	return false
 }
 
 type TextMessage struct {
@@ -141,4 +182,55 @@ type EmotionMessage struct {
 	MediaId      string
 	ToUserName   string
 	Type         int
+}
+
+type LocalMessage struct {
+	msgtype      int
+	content      []byte
+	fromUserName string
+	toUserName   string
+}
+
+func (lm *LocalMessage) Type() int {
+	return lm.msgtype
+}
+
+func (lm *LocalMessage) Content() []byte {
+	return lm.content
+}
+
+func (lm *LocalMessage) From() string {
+	return lm.fromUserName
+}
+
+func (lm *LocalMessage) To() string {
+	return lm.toUserName
+}
+
+func (lm *LocalMessage) SetType(msgtype int) *LocalMessage {
+	lm.msgtype = msgtype
+	return lm
+}
+
+func (lm *LocalMessage) SetContent(content []byte) *LocalMessage {
+	lm.content = content
+	return lm
+}
+
+func (lm *LocalMessage) SetFrom(from string) *LocalMessage {
+	lm.fromUserName = from
+	return lm
+}
+
+func (lm *LocalMessage) SetTo(to string) *LocalMessage {
+	lm.toUserName = to
+	return lm
+}
+
+func (lm *LocalMessage) IsValid() bool {
+	if !IsValid(lm.msgtype) || lm.fromUserName == "" || lm.toUserName == "" || lm.content == nil {
+		return false
+	}
+
+	return true
 }

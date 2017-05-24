@@ -20,10 +20,12 @@ import (
 	//"gopkg.in/h2non/filetype.v1/types"
 	//"net/http/httputil"
 	"db"
+	"handler"
 	"message"
 	"net/url"
 	"os"
 	"os/signal"
+	"processor"
 	"regexp"
 	"strconv"
 	"strings"
@@ -32,41 +34,36 @@ import (
 	"util"
 )
 
-//- 微信目前分为2个版本，所以在获取接口时候请求的路径也不一样，
-//	很早以前注册的用户请求地址一般为wx.qq.com，
-//	新注册用户为wx2.qq.com，
-//  导致很多开发者在开发微信网页版的时候返现有些用户能登录并获取到消息，有的只能登录不能获取到消息
-//  微信返回码RetCode和相应的解决方案：0－正常；1－失败，refresh；1101/1100－登出/失败，refresh/重新登录；1203－恭喜您，几个小时后重试，没有解决方案；Selector：2－新消息，6/7－进入/离开聊天界面通常是在手机上进行操作，重新初始化即可，0－正常
 type WeChat struct {
-	client            *http.Client      `json:"-"`
-	cacheName         string            `json:"-"`
-	UserAgent         string            `json:"UserAgent"`
-	uuid              string            `json:"-"`
-	Redirect          string            `json:"Redirect"`
-	UUID              string            `json:"UUID"`
-	Scan              string            `json:"-"`
-	Login             chan bool         `json:"-"`
-	Name              string            `json:"Name"`
-	Ticket            string            `json:"Ticket"`
-	Lang              string            `json:"Lang"`
-	BaseURL           string            `json:"BaseURL"`
-	BaseRequest       *BaseRequest      `json:"BaseRequest"`
-	APIPath           string            `json:"APIPath"`
-	DeviceID          string            `json:"DeviceID"`
-	GroupList         []Member          `json:"GroupList"`
-	SyncServer        string            `json:"SyncServer"`
-	SyncKey           *SyncKey          `json:"SyncKey"`
-	UserName          string            `json:"UserName"`
-	NickName          string            `json:"NickName"`
-	ContactDBNickName map[string]Member `json:"ContactDBNickName"`
-	ContactDBUserName map[string]Member `json:"ContactDBUserName"`
-	Cookies           []*http.Cookie    `json:"Cookies"`
-	DB                *db.FileDB        `json:"DB"`
-	Cookie            map[string]string `json:"Cookie"`
-	MediaCount        uint32            `json:"MediaCount"`
-	Shutdown          chan bool         `json:"-"`
-	Signal            chan os.Signal    `json:"-"`
-	plugins           map[int][]*Plugin `json:"-"`
+	client            *http.Client         `json:"-"`
+	cacheName         string               `json:"-"`
+	UserAgent         string               `json:"UserAgent"`
+	uuid              string               `json:"-"`
+	Redirect          string               `json:"Redirect"`
+	UUID              string               `json:"UUID"`
+	Scan              string               `json:"-"`
+	Login             chan bool            `json:"-"`
+	Name              string               `json:"Name"`
+	Ticket            string               `json:"Ticket"`
+	Lang              string               `json:"Lang"`
+	BaseURL           string               `json:"BaseURL"`
+	BaseRequest       *BaseRequest         `json:"BaseRequest"`
+	APIPath           string               `json:"APIPath"`
+	DeviceID          string               `json:"DeviceID"`
+	GroupList         []Member             `json:"GroupList"`
+	SyncServer        string               `json:"SyncServer"`
+	SyncKey           *SyncKey             `json:"SyncKey"`
+	UserName          string               `json:"UserName"`
+	NickName          string               `json:"NickName"`
+	ContactDBNickName map[string]Member    `json:"ContactDBNickName"`
+	ContactDBUserName map[string]Member    `json:"ContactDBUserName"`
+	Cookies           []*http.Cookie       `json:"Cookies"`
+	DB                *db.FileDB           `json:"DB"`
+	Cookie            map[string]string    `json:"Cookie"`
+	MediaCount        uint32               `json:"MediaCount"`
+	Shutdown          chan bool            `json:"-"`
+	Signal            chan os.Signal       `json:"-"`
+	Consumer          *processor.Processor `json:"-"`
 }
 
 type Cache struct {
@@ -210,88 +207,11 @@ type CommonReqBody struct {
 	Topic              string
 }
 
-/*
-{
-	"MsgId": "7318483579373924965",
-	"FromUserName": "@e24439096308969756e667d06f33a50e",
-	"ToUserName": "@b18d3f16a138505fd2ef663815925561948e2f970a910bba56396a5a62e7bf30",
-	"MsgType": 1,
-	"Content": "睡觉睡觉就是计算机计算机三级到你家都觉得那女的",
-	"Status": 3,
-	"ImgStatus": 1,
-	"CreateTime": 1494261110,
-	"VoiceLength": 0,
-	"PlayLength": 0,
-	"FileName": "",
-	"FileSize": "",
-	"MediaId": "",
-	"Url": "",
-	"AppMsgType": 0,
-	"StatusNotifyCode": 0,
-	"StatusNotifyUserName": "",
-	"RecommendInfo": {
-	    "UserName": "",
-	    "NickName": "",
-	    "QQNum": 0,
-	    "Province": "",
-	    "City": "",
-	    "Content": "",
-	    "Signature": "",
-	    "Alias": "",
-	    "Scene": 0,
-	    "VerifyFlag": 0,
-	    "AttrStatus": 0,
-	    "Sex": 0,
-	    "Ticket": "",
-	    "OpCode": 0
-	}
-	,
-	"ForwardFlag": 0,
-	"AppInfo": {
-	    "AppID": "",
-	    "Type": 0
-	}
-	,
-	"HasProductId": 0,
-	"Ticket": "",
-	"ImgHeight": 0,
-	"ImgWidth": 0,
-	"SubMsgType": 0,
-	"NewMsgId": 7318483579373924965,
-	"OriContent": ""
-    }
-*/
 type SendMessageResponse struct {
 	BaseResponse BaseResponse
 	MsgID        string `json:"MsgId"`
 	LocalID      int64  `json:"LocalID"`
 }
-
-/* I think this should be put into Member ---- Contact struct
-type ModifiedContact struct {
-	UserName          string
-	NickName          string
-	Sex               string
-	HeadImgUpdateFlag int
-	ContactType       int
-	Alias             string
-	ChatRoomOwner     string
-	HeadImgUrl        string
-	ContactFlag       int
-	MemberCount       int
-	MemberList        []Member
-	HideInputBarFlag  int
-	Signature         string
-	VerifyFlag        int
-	RemarkName        string
-	Statues           int
-	AttrStatus        int
-	Province          string
-	City              string
-	SnsFlag           string
-	KeyWor            string
-}
-*/
 
 type UserName struct {
 	Buff string `json:"Buff"`
@@ -324,18 +244,6 @@ type Profile struct {
 	Signature         string     `json:"Signature"`
 }
 
-//This message should be carefully handled
-//For each kind of Received new message use different API to handle.
-/*
-	case 3:
-		path = `webwxgetmsgimg`
-	case 47:
-		path = `webwxgetmsgimg`
-	case 34:
-		path = `webwxgetvoice`
-	case 43:
-		path = `webwxgetvideo`
-*/
 type MessageSyncResponse struct {
 	BaseResponse           BaseResponse      `json:"BaseResponse"`
 	AddMsgCount            int               `json:"AddMsgCount"` //New message count
@@ -553,89 +461,11 @@ func (wc *WeChat) GetUUID() error {
 	return nil
 }
 
-//We can also use the webxwpushloginurl API to login after we get the UIN.
-
-//If you want to display QR on terminal, use this link
-//"https://login.weixin.qq.com/l/"+uuid,
-
-//If you want to save QR code locally, use this link, USE POST method and with this params {"t": "webwx", "_": strconv.FormatInt(time.Now().Unix(), 10)}, Also remember to set the http Header.
-//req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-//req.Header.Set("Cache-Control", "no-cache")
-//"https://login.weixin.qq.com/qrcode/" + uuid
-
-/*
-<br>
-
-| API | 绑定登陆（webwxpushloginurl） |
-| --- | --------- |
-| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxpushloginurl |
-| method | GET |
-| params | **uin**: xxx |
-
-返回数据(String):
-```
-{'msg': 'all ok', 'uuid': 'xxx', 'ret': '0'}
-
-通过这种方式可以省掉扫二维码这步操作，更加方便
-```
-<br>
-
-| API | 生成二维码 |
-| --- | --------- |
-| url | https://login.weixin.qq.com/l/ `uuid` |
-| method | GET |
-<br>
-*/
-
 func (wc *WeChat) GetQRCode() error {
-	/*
-		qrURL := `https://login.weixin.qq.com/qrcode/` + uuid
-		params := url.Values{}
-		params.Set("t", "webwx")
-		params.Set("_", strconv.FormatInt(time.Now().Unix(), 10))
-
-		req, err := http.NewRequest("POST", qrURL, strings.NewReader(params.Encode()))
-		if err != nil {
-			return ``, err
-		}
-
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		req.Header.Set("Cache-Control", "no-cache")
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			return ``, err
-		}
-		defer resp.Body.Close()
-
-		data, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return ``, err
-		}
-
-		path := `qrcode.png`
-		if err = createFile(path, data, false); err != nil {
-			return ``, err
-		}
-	*/
-
-	//If you want to display QR on terminal, use this link
-	//"https://login.weixin.qq.com/l/"+uuid,
 	qrterminal.Generate("https://login.weixin.qq.com/l/"+wc.uuid, qrterminal.L, os.Stdout)
 	return nil
 }
 
-//We use Get method with the following parameters to get the QR code san status.
-//"tip: scanned 0, unscanned 1
-//"uuid: our uuid"
-//Time stamp
-/*
-| API | 二维码扫描登录 |
-| --- | --------- |
-| url | https://login.weixin.qq.com/cgi-bin/mmwebwx-bin/login |
-| method | GET |
-| params | **tip**: 1 `未扫描` 0 `已扫描` <br> **uuid**: xxx <br> **_**: `时间戳` |
-
-*/
 func (wc *WeChat) WaitForQRCodeScan() {
 	tick := time.Tick(time.Second * 5)
 	params := url.Values{}
@@ -705,38 +535,14 @@ func (wc *WeChat) WaitForQRCodeScan() {
 			log.Println(wc)
 			wc.Login <- true
 			break
-		} else {
-			if code == "201" {
-				log.Println("Please confirm login on your telephone")
-			} else {
-				log.Println("Please Scan the QR Code.")
-			}
-			continue
+		} else if code == "201" {
+			log.Println("Please confirm login on your telephone")
+		} else if code == "408" {
+			wc.GetQRCode()
 		}
 	}
 }
 
-//We can get the ticket,uuid,lang, scan from the REDIRECT link.
-//After that we add "fun=new" to the parameter list to GET the
-//redirect link. The return value is and XML which contains the
-//Base information which is necessary for future use.
-/*
-| API | webwxnewloginpage |
-| --- | --------- |
-| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxnewloginpage |
-| method | GET |
-| params | **ticket**: xxx <br> **uuid**: xxx <br> **lang**: zh_CN `语言` <br> **scan**: xxx <br> **fun**: new |
-
-<error>
-	<ret>0</ret>
-	<message>OK</message>
-	<skey>xxx</skey>
-	<wxsid>xxx</wxsid>
-	<wxuin>xxx</wxuin>
-	<pass_ticket>xxx</pass_ticket>
-	<isgrayscale>1</isgrayscale>
-</error>
-*/
 func (wc *WeChat) GetBaseRequest() {
 	resp, err := wc.client.Get(wc.Redirect + "&fun=new")
 	if err != nil {
@@ -809,25 +615,12 @@ func NewWeChatClient(name string) (*WeChat, error) {
 		Signal:      make(chan os.Signal),
 		APIPath:     "/cgi-bin/mmwebwx-bin/",
 		DB:          database,
-		//plugins:     make(map[int][]*Plugin, len(message.MsgType)),
-		plugins: make(map[int][]*Plugin, message.MsgTypeCount),
+		Consumer:    processor.DefaultProcessor,
 	}
-
-	wc.registerDefaultPlugin()
 
 	return wc, nil
 }
 
-// Wechat init
-//| API | webwxinit |
-//| --- | --------- |
-//| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxinit?pass_ticket=xxx&skey=xxx&r=xxx |
-//| method | POST |
-//| data | JSON |
-//| header | ContentType: application/json; charset=UTF-8 |
-//| params | { BaseRequest: { Uin: xxx, Sid: xxx, Skey: xxx, DeviceID: xxx} } |
-//注意这里目前测得的结果是"https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxinit?pass_ticket=xxx&skey=xxx&r=xxx "
-//同时注意BaseURL 并不是根域名，而是API根:https://wx2.qq.com/cgi-bin/mmwebwx-bin/
 func (wc *WeChat) WeChatInit() {
 	/*
 		params := url.Values{}
@@ -888,34 +681,7 @@ func (wc *WeChat) WeChatInit() {
 	return
 }
 
-/*
-
-| API | webwxgetcontact |
-| --- | --------- |
-| url | https://wx.qq.com/cgi-bin/mmwebwx-bin//webwxgetcontact?pass_ticket=xxx&skey=xxx&r=xxx&seq=xxx |
-| method | POST |
-| data | JSON |
-| header | ContentType: application/json; charset=UTF-8 |
-// 注意这里要带上BaseRequest头部 不然获得的列表时空的。
-// 注意这里Get到的只是通讯录中的联系人，如果是群的话，这个API get到的是群ID并不能GET到群成员。
-// 群成员是通过getbatchcontact来实现的。
-
-
-### 账号类型
-
-| 类型 | 说明 |
-| :--: | --- |
-| 个人账号 | 以`@`开头，例如：`@xxx` |
-| 群聊 | 以`@@`开头，例如：`@@xxx` |
-| 公众号/服务号 | 以`@`开头，但其`VerifyFlag` & 8 != 0
-	`VerifyFlag`:
-		一般公众号/服务号：8
-		微信自家的服务号：24
-		微信官方账号`微信团队`：56
-		特殊账号 | 像文件传输助手之类的账号，有特殊的ID，目前已知的有：`filehelper`, `newsapp`, `fmessage`, `weibo`, `qqmail`, `fmessage`, `tmessage`, `qmessage`, `qqsync`, `floatbottle`, `lbsapp`, `shakeapp`, `medianote`, `qqfriend`, `readerapp`, `blogapp`, `facebookapp`, `masssendapp`, `meishiapp`, `feedsapp`, `voip`, `blogappweixin`, `weixin`, `brandsessionholder`, `weixinreminder`, `officialaccounts`, `notification_messages`, `wxitil`, `userexperience_alarm`, `notification_messages`
-*/
 func (wc *WeChat) GetContactList() {
-	//uri := "https://wx2.qq.com/cgi-bin/mmwebwx-bin/" + "webwxgetcontact?pass_ticket=" + wc.BaseRequest.PassTicket + "&skey=" + wc.BaseRequest.Skey + "&r=" + strconv.FormatInt(time.Now().Unix(), 10) + "&seq=0"
 	uri := wc.BaseURL + wc.APIPath + "webwxgetcontact?pass_ticket=" + wc.BaseRequest.PassTicket + "&skey=" + wc.BaseRequest.Skey + "&r=" + strconv.FormatInt(time.Now().Unix(), 10)
 	data, err := json.Marshal(initBaseRequest{
 		BaseRequest: wc.BaseRequest,
@@ -979,26 +745,6 @@ func (wc *WeChat) GetContactList() {
 	}
 	wc.DB.Save("Cache.json", cache)
 }
-
-/*
-| API | webwxbatchgetcontact |
-| --- | --------- |
-| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r=xxx&pass_ticket=xxx |
-| method | POST |
-| data | JSON |
-| header | ContentType: application/json; charset=UTF-8 |
-| params | { BaseRequest: {
-    		Uin: xxx,
-		Sid: xxx,
-		Skey: xxx,
-		DeviceID: xxx
-	    },
-	    Count: `群数量`,
-	    List: [{ UserName: `群ID`, EncryChatRoomId: "" }, ...],
-	}
-注意这里的返回值和 getcontact的返回值是不同的. 留意两个结构体的内容。
-目前测试的结果API 应该为： https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r=xxx&pass_ticket=xxx |
-*/
 
 //请求群组
 func (wc *WeChat) GetGroupMemberList() {
@@ -1064,30 +810,6 @@ func (wc *WeChat) GetGroupMemberList() {
 	wc.DB.Save("Cache.json", cache)
 }
 
-/*
-| API | synccheck |
-| --- | --------- |
-| protocol | https |
-| host | webpush.weixin.qq.com webpush.wx2.qq.com webpush.wx8.qq.com webpush.wx.qq.com webpush.web2.WeChat.com webpush.web.WeChat.com |
-| path | /cgi-bin/mmwebwx-bin/synccheck |
-| method | GET |
-| data | URL Encode |
-| params | **r**: `时间戳`  **sid**: xxx **uin**: xxx  **skey**: xxx  **deviceid**: xxx **synckey**: xxx **_**: `时间戳` |
-
-返回数据(String):
-```
-window.synccheck={retcode:"xxx",selector:"xxx"}
-
-retcode:
-	0 正常
-	1100 失败/登出微信
-selector:
-	0 正常
-	2 新的消息
-	7 进入/离开聊天界面
-
-//心跳函数
-*/
 //@liwei: 这里应该在该函数返回2以后再去用消息同步接口来获取消息
 
 var retCodeAndSelector = regexp.MustCompile(`window\.synccheck=\{retcode\:\"(?P<retcode>[0-9]+)\"\,selector\:\"(?P<selector>[0-9]+)\"\}`)
@@ -1139,7 +861,12 @@ func (wc *WeChat) SyncCheck() error {
 			go wc.MessageSync()
 			return nil
 		} else if selector == 7 { // Enter/Leave ?
-			log.Println("Currently I don't know what is this mean ?")
+			go wc.MessageSync()
+			log.Println("Currently I don't know what is this mean ? selector ==: ", selector)
+			return nil
+		} else if selector == 5 { // Enter/Leave ?
+			go wc.MessageSync()
+			log.Println("Currently I don't know what is this mean ? selector ==: ", selector)
 			return nil
 		} else {
 			log.Println("Unknown selector returned during syncheck process: " + strconv.Itoa(int(selector)))
@@ -1183,61 +910,6 @@ func (wc *WeChat) GetSyncServer() bool {
 	return false
 }
 
-/*
-| API | webwxsync |
-| --- | --------- |
-| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid=xxx&skey=xxx&pass_ticket=xxx |
-| method | POST |
-| data | JSON |
-| header | ContentType: application/json; charset=UTF-8 |
-| params | { BaseRequest: { Uin: xxx, Sid: xxx, Skey: xxx, DeviceID: xxx }, SyncKey: xxx, rr: `时间戳取反`}
-
-返回数据(JSON):
-```
-{
-	'BaseResponse': {'ErrMsg': '', 'Ret': 0},
-	'SyncKey': {
-		'Count': 7,
-		'List': [
-			{'Val': 636214192, 'Key': 1},
-			...
-		]
-	},
-	'ContinueFlag': 0,
-	'AddMsgCount': 1,
-	'AddMsgList': [
-		{
-			'FromUserName': '',
-			'PlayLength': 0,
-			'RecommendInfo': {...},
-			'Content': "",
-			'StatusNotifyUserName': '',
-			'StatusNotifyCode': 5,
-			'Status': 3,
-			'VoiceLength': 0,
-			'ToUserName': '',
-			'ForwardFlag': 0,
-			'AppMsgType': 0,
-			'AppInfo': {'Type': 0, 'AppID': ''},
-			'Url': '',
-			'ImgStatus': 1,
-			'MsgType': 51,
-			'ImgHeight': 0,
-			'MediaId': '',
-			'FileName': '',
-			'FileSize': '',
-			...
-		},
-		...
-	],
-	'ModChatRoomMemberCount': 0,
-	'ModContactList': [],
-	'DelContactList': [],
-	'ModChatRoomMemberList': [],
-	'DelContactCount': 0,
-	...
-}
-*/
 //@liwei: 注意，消息同步过程中synckey在最开始的时候使用init时获取的值。
 //此后每次都要使用最近一次获取的synckey值来进行同步，否则每次获取到的都是从init到目前的消息
 func (wc *WeChat) MessageSync() {
@@ -1336,45 +1008,102 @@ func (wc *WeChat) HandleMessageSyncResponse(resp *MessageSyncResponse) {
 	}
 }
 
-/*
-
-| MsgType | 说明 |
-| ------- | --- |
-| 1  | 文本消息 |
-| 3  | 图片消息 |
-| 34 | 语音消息 |
-| 37 | 好友确认消息 |
-| 40 | POSSIBLEFRIEND_MSG |
-| 42 | 共享名片 |
-| 43 | 视频消息 |
-| 47 | 动画表情 |
-| 48 | 位置消息 |
-| 49 | 分享链接 |
-| 50 | VOIPMSG |
-| 51 | 微信初始化消息 |
-| 52 | VOIPNOTIFY |
-| 53 | VOIPINVITE |
-| 62 | 小视频 |
-| 9999 | SYSNOTICE |
-| 10000 | 系统消息 |
-| 10002 | 撤回消息 |
-
-*/
 func (wc *WeChat) HandleNewMessage(msg []message.Message) {
-	log.Println(len(wc.plugins), wc.plugins)
 	for _, m := range msg {
-		log.Println("New Message: ", m.MsgType)
-		if ps, ok := wc.plugins[m.MsgType]; ok {
-			for _, p := range ps {
-				log.Println(len(ps), p.Name())
-				p.Handle(wc, &m)
-			}
-		} else {
+		var local message.LocalMessage
+		from, err := wc.GetNickNameByUserName(m.From())
+		if err != nil {
+			log.Println("Cannot process new message: ", err)
 			continue
-			log.Println("Cannot find handler for: ", m.MsgType)
-			//panic("Received unknown message: " + strconv.Itoa(m.MsgType))
+		}
+
+		content, err := wc.GetMessageContent(&m)
+		if err != nil {
+			log.Println("Cannot process new message: ", err)
+			continue
+		}
+
+		local.SetFrom(from).SetTo(wc.NickName).SetType(m.MsgType).SetContent(content)
+
+		resp, err := wc.Consumer.Process(&local)
+
+		for _, r := range resp {
+			if r != nil && r.IsValid() {
+				wc.SendMessage(r)
+			}
 		}
 	}
+}
+
+func (wc *WeChat) SendMessage(msg *message.LocalMessage) {
+	to, err := wc.GetUserNameByNickName(msg.To())
+	if err != nil {
+		log.Println("Cannot find user: ", msg.To())
+		return
+	}
+
+	switch msg.Type() {
+	case message.TEXT:
+		wc.SendTextMessage(wc.UserName, to, string(msg.Content()))
+	case message.IMAGE:
+		wc.SendImageMessage(wc.UserName, to, string(msg.Content()))
+	case message.EMOJI:
+		wc.SendEmojiMessage(wc.UserName, to, string(msg.Content()))
+	default:
+		log.Println("Send message of type: ", message.Type[msg.Type()], " is not emplemented!")
+	}
+}
+
+func (wc *WeChat) GetNickNameByUserName(name string) (string, error) {
+	if m, ok := wc.ContactDBUserName[name]; ok {
+		return m.NickName, nil
+	}
+
+	return "", errors.New(name + " is not exist")
+}
+
+func (wc *WeChat) GetUserNameByNickName(name string) (string, error) {
+	if m, ok := wc.ContactDBNickName[name]; ok {
+		return m.UserName, nil
+	}
+
+	return "", errors.New(name + " is not exist")
+}
+
+func (wc *WeChat) GetMessageContent(msg *message.Message) ([]byte, error) {
+	if msg.IsTextMessage() {
+		return wc.GetTextMessageContent(msg), nil
+	} else {
+		return []byte("Not implemented"), errors.New("Not Implemented!")
+	}
+}
+
+func (wc *WeChat) GetTextMessageContent(msg *message.Message) []byte {
+	return []byte(msg.Content)
+}
+
+func (wc *WeChat) GetImageMessageContent(msg *message.Message) []byte {
+	return []byte("Not implemented")
+}
+
+func (wc *WeChat) GetVideoMessageContent(msg *message.Message) []byte {
+	return []byte("Not implemented")
+}
+
+func (wc *WeChat) GetEmojiMessageContent(msg *message.Message) []byte {
+	return []byte("Not implemented")
+}
+
+func (wc *WeChat) GetVoiceMessageContent(msg *message.Message) []byte {
+	return []byte("Not implemented")
+}
+
+func (wc *WeChat) GetShortVideoMessageContent(msg *message.Message) []byte {
+	return []byte("Not implemented")
+}
+
+func (wc *WeChat) GetVerifyMessageContent(msg *message.Message) []byte {
+	return []byte("Not implemented")
 }
 
 func (wc *WeChat) HandleModContact(members []Member) {
@@ -1397,85 +1126,6 @@ func (wc *WeChat) HandleModChatRoomMember(members []Member) {
 		log.Println(m)
 	}
 }
-
-/*
-消息一般格式：
-{
-	"FromUserName": "",
-	"ToUserName": "",
-	"Content": "",
-	"StatusNotifyUserName": "",
-	"ImgWidth": 0,
-	"PlayLength": 0,
-	"RecommendInfo": {...},
-	"StatusNotifyCode": 4,
-	"NewMsgId": "",
-	"Status": 3,
-	"VoiceLength": 0,
-	"ForwardFlag": 0,
-	"AppMsgType": 0,
-	"Ticket": "",
-	"AppInfo": {...},
-	"Url": "",
-	"ImgStatus": 1,
-	"MsgType": 1,
-	"ImgHeight": 0,
-	"MediaId": "",
-	"MsgId": "",
-	"FileName": "",
-	"HasProductId": 0,
-	"FileSize": "",
-	"CreateTime": 1454602196,
-	"SubMsgType": 0
-}
-
-*/
-
-/*
-
-| MsgType | 说明 |
-| ------- | --- |
-| 1  | 文本消息 |
-| 3  | 图片消息 |
-| 34 | 语音消息 |
-| 37 | 好友确认消息 |
-| 40 | POSSIBLEFRIEND_MSG |
-| 42 | 共享名片 |
-| 43 | 视频消息 |
-| 47 | 动画表情 |
-| 48 | 位置消息 |
-| 49 | 分享链接 |
-| 50 | VOIPMSG |
-| 51 | 微信初始化消息 |
-| 52 | VOIPNOTIFY |
-| 53 | VOIPINVITE |
-| 62 | 小视频 |
-| 9999 | SYSNOTICE |
-| 10000 | 系统消息 |
-| 10002 | 撤回消息 |
-
-*/
-
-/*
-
-| API | webwxstatusnotify |
-| --- | --------- |
-| url | https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxstatusnotify?lang=zh_CN&pass_ticket=xxx |
-| method | POST |
-| data | JSON |
-| header | ContentType: application/json; charset=UTF-8 |
-| params | {
-    BaseRequest: {
-	Uin: xxx,
-	Sid: xxx,
-	Skey: xxx,
-	DeviceID: xxx
-    },
-    Code: 3,
-    FromUserName: `自己ID`,
-    ToUserName: `自己ID`,
-    ClientMsgId: `时间戳` <br> }
-*/
 
 //这个函数到底是用来干啥的？ ----> 开启微信状态通知
 func (wc *WeChat) StatusNotify() {
@@ -1532,33 +1182,6 @@ func (wc *WeChat) StatusNotify() {
 	//log.Println(sn)
 }
 
-/*
-
-| API | webwxsendmsg |
-| --- | ------------ |
-| url | https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?pass_ticket=xxx |
-| method | POST |
-| data | JSON |
-| header | ContentType: application/json; charset=UTF-8 |
-| params |
-	{
-    		BaseRequest: {
-			Uin: xxx,
-			Sid: xxx,
-			Skey: xxx,
-			DeviceID: xxx
-		},
-		Msg: {
-			Type: 1 `文字消息`,
-			Content: `要发送的消息`,
-			FromUserName: `自己ID`,
-			ToUserName: `好友ID`,
-			LocalID: `与clientMsgId相同`,
-			ClientMsgId: `时间戳左移4位随后补上4位随机数`
-		}
-	}
-*/
-
 func (wc *WeChat) SendTextMessage(from, to, msg string) {
 	params := url.Values{}
 	params.Add("pass_ticket", wc.BaseRequest.PassTicket)
@@ -1577,7 +1200,7 @@ func (wc *WeChat) SendTextMessage(from, to, msg string) {
 		},
 	})
 
-	log.Println("Sending message from: ", wc.UserName, " to ", to)
+	log.Println("Sending message from: ", from, " to ", to)
 	if err != nil {
 		log.Println("Error happend when marshal: ", err.Error())
 		return
@@ -1647,32 +1270,7 @@ func (wc *WeChat) SendShareLinkMessage(from, to, msg string) {
 	wc.DB.Save("SendTextMessageResponseBody.json", body)
 }
 
-/*
-| API | webwxsendmsgemotion |
-| --- | ------------ |
-| url | https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsendemoticon?fun=sys&f=json&pass_ticket=xxx |
-| method | POST |
-| data | JSON |
-| header | ContentType: application/json; charset=UTF-8 |
-| params | {
-    		BaseRequest: {
-		    Uin: xxx,
-		    Sid: xxx,
-		    Skey: xxx,
-		    DeviceID: xxx
-		},
-		Msg: {
-		    Type: 47 `emoji消息`,
-		    EmojiFlag: 2,
-		    MediaId: `表情上传后的媒体ID`,
-		    FromUserName: `自己ID`,
-		    ToUserName: `好友ID`,
-		    LocalID: `与clientMsgId相同`,
-		    ClientMsgId: `时间戳左移4位随后补上4位随机数`
-		}
-	  }
-*/
-func (wc *WeChat) SendEmotionMessage(to, id string) {
+func (wc *WeChat) SendEmojiMessage(from, to, id string) {
 	params := url.Values{}
 	//params.Add("pass_ticket", wc.BaseRequest.PassTicket)
 	params.Add("fun", "sys")
@@ -1685,7 +1283,7 @@ func (wc *WeChat) SendEmotionMessage(to, id string) {
 		Msg: message.EmotionMessage{
 			Type:         47,
 			EmojiFlag:    2,
-			FromUserName: wc.UserName,
+			FromUserName: from,
 			ToUserName:   wc.ContactDBNickName["cp4"].UserName,
 			LocalID:      int64(time.Now().Unix() * 1e4),
 			ClientMsgId:  int64(time.Now().Unix() * 1e4),
@@ -1722,7 +1320,7 @@ func (wc *WeChat) SendEmotionMessage(to, id string) {
 	wc.DB.Save("SendEmotionMessageResponseBody.json", body)
 }
 
-func (wc *WeChat) SendImageMessage(to, id string) {
+func (wc *WeChat) SendImageMessage(from, to, id string) {
 	params := url.Values{}
 	params.Add("pass_ticket", wc.BaseRequest.PassTicket)
 	params.Add("fun", "async")
@@ -1737,7 +1335,7 @@ func (wc *WeChat) SendImageMessage(to, id string) {
 		Msg: message.MediaMessage{
 			Type:         3,
 			Content:      "",
-			FromUserName: wc.UserName,
+			FromUserName: from,
 			ToUserName:   to,
 			LocalID:      int64(time.Now().Unix() * 1e4),
 			ClientMsgId:  int64(time.Now().Unix() * 1e4),
@@ -1875,25 +1473,6 @@ func (wc *WeChat) UploadMedia(name, to string) (string, error) {
 	return result.MediaID, nil
 }
 
-/*
-| API | webwxrevokemsg |
-| --- | ------------ |
-| url | https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxrevokemsg |
-| method | POST |
-| data | JSON |
-| header | ContentType: application/json; charset=UTF-8 |
-| params | {
-    	BaseRequest: {
-	    Uin: xxx,
-	    Sid: xxx,
-	    Skey: xxx,
-	    DeviceID: xxx
-	},
-	SvrMsgId: msg_id,
-	ToUserName: user_id,
-	ClientMsgId: local_msg_id
-    }
-*/
 func (wc *WeChat) RevokeMessage() {
 
 }
@@ -1914,6 +1493,14 @@ func (wc *WeChat) Run() {
 		}
 	}()
 	<-wc.Shutdown
+}
+
+func (wc *WeChat) AddHandler(h *handler.Handler) {
+	wc.Consumer.RegisterHandler(h)
+}
+
+func (wc *WeChat) DelHandler(h *handler.Handler) {
+	wc.Consumer.DeRegisterHandler(h)
 }
 
 /*
@@ -1976,42 +1563,3 @@ func (wc *WeChat) Run() {
 	uri := common.CgiUrl + "/webwxverifyuser?" + km.Encode()
 	uri := common.CgiUrl + "/webwxcreatechatroom?" + km.Encode()
 */
-
-func (wc *WeChat) registerDefaultPlugin() {
-	for _, p := range DefaultPlugins {
-		wc.RegisterPlugin(p)
-	}
-}
-
-func (wc *WeChat) RegisterPlugin(p *Plugin) {
-	if _, ok := wc.plugins[p.msgType]; !ok {
-		wc.plugins[p.msgType] = make([]*Plugin, 0, 1)
-	}
-
-	log.Println(p.msgType)
-	wc.plugins[p.msgType] = append(wc.plugins[p.msgType], p)
-	return
-}
-
-func init() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	DefaultPlugins = make([]*Plugin, 0, len(message.MsgType))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultTEXT", message.TEXT, defaultTextMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultIMAGE", message.IMAGE, defaultImageMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultVOICE", message.VOICE, defaultVoiceMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultVERIFY", message.VERIFY, defaultVerifyMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultPOSSIBLEFRIEND", message.POSSIBLEFRIEND, defaultPossibleFriendMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultSHAREID", message.SHAREID, defaultShareIDMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultVIDEO", message.VIDEO, defaultVideoMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultEMOJI", message.EMOJI, defaultEmojiMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultSHAREPOSITION", message.SHAREPOSITION, defaultSharePositionMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultSHARELINK", message.SHARELINK, defaultShareLinkMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultVOIP", message.VOIP, defaultVOIPMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultINIT", message.INIT, defaultInitMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultVOIPNOTIFY", message.VOIPNOTIFY, defaultVOIPNotifyMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultVOIPINVITE", message.VOIPINVITE, defaultVOIPInviteMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultSHORTVIDEO", message.SHORTVIDEO, defaultShortVideoMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultSYSNOTICE", message.SYSNOTICE, defaultSystemNoticeMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultSYSTEM", message.SYSTEM, defaultSystemMessageHandler))
-	DefaultPlugins = append(DefaultPlugins, NewPlugin("DefaultREVOKE", message.REVOKE, defaultRevokeMessageHandler))
-}
