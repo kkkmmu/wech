@@ -1,6 +1,8 @@
 package main
 
 import (
+	"handler"
+	"log"
 	"wechat"
 )
 
@@ -9,6 +11,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	wc.AddHandler(handler.BeautifulHandler)
 
 	if err := wc.FastLogin(); err != nil {
 		wc.GetUUID()
@@ -23,4 +27,8 @@ func main() {
 	wc.GetGroupMemberList()
 	// wc.GetSyncServer()
 	wc.Run()
+}
+
+func init() {
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
 }

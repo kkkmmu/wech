@@ -1042,6 +1042,7 @@ func (wc *WeChat) SendMessage(msg *message.LocalMessage) {
 		return
 	}
 
+	log.Println("Send message: ", string(msg.Content()), " from: ", wc.UserName, " to: ", to)
 	switch msg.Type() {
 	case message.TEXT:
 		wc.SendTextMessage(wc.UserName, to, string(msg.Content()))
@@ -1270,7 +1271,13 @@ func (wc *WeChat) SendShareLinkMessage(from, to, msg string) {
 	wc.DB.Save("SendTextMessageResponseBody.json", body)
 }
 
-func (wc *WeChat) SendEmojiMessage(from, to, id string) {
+func (wc *WeChat) SendEmojiMessage(from, to, file string) {
+	id, err := wc.UploadMedia(file, to)
+	if err != nil {
+		log.Println("Cannot upload media: ", file)
+		return
+	}
+
 	params := url.Values{}
 	//params.Add("pass_ticket", wc.BaseRequest.PassTicket)
 	params.Add("fun", "sys")
@@ -1293,7 +1300,7 @@ func (wc *WeChat) SendEmojiMessage(from, to, id string) {
 	})
 
 	log.Println(wc.ContactDBNickName)
-	log.Println("Sending message from: ", wc.UserName, " to ", wc.ContactDBNickName["cp4"].UserName)
+	log.Println("Sending message from: ", wc.UserName, " to ", to)
 	if err != nil {
 		log.Println("Error happend when marshal: ", err.Error())
 		return
@@ -1320,7 +1327,13 @@ func (wc *WeChat) SendEmojiMessage(from, to, id string) {
 	wc.DB.Save("SendEmotionMessageResponseBody.json", body)
 }
 
-func (wc *WeChat) SendImageMessage(from, to, id string) {
+func (wc *WeChat) SendImageMessage(from, to, file string) {
+	id, err := wc.UploadMedia(file, to)
+	if err != nil {
+		log.Println("Cannot upload media: ", file)
+		return
+	}
+
 	params := url.Values{}
 	params.Add("pass_ticket", wc.BaseRequest.PassTicket)
 	params.Add("fun", "async")
@@ -1344,10 +1357,8 @@ func (wc *WeChat) SendImageMessage(from, to, id string) {
 		Scene: 0,
 	})
 
-	log.Println(wc.ContactDBUserName[wc.UserName].NickName)
-	log.Println(wc.ContactDBNickName["cp4"].NickName)
 	log.Println(string(data))
-	log.Println("Sending message from: ", wc.UserName, " to ", wc.ContactDBNickName["cp4"].UserName)
+	log.Println("Sending message from: ", wc.UserName, " to ", to)
 	if err != nil {
 		log.Println("Error happend when marshal: ", err.Error())
 		return
@@ -1377,7 +1388,6 @@ func (wc *WeChat) SendImageMessage(from, to, id string) {
 }
 
 func (wc *WeChat) UploadMedia(name, to string) (string, error) {
-	//func (wc *weChat) UploadMedia(buf []byte, kind types.Type, info os.FileInfo, to string) (string, error) {
 	file, err := os.Stat(name)
 	if err != nil {
 		return "", err
@@ -1398,6 +1408,7 @@ func (wc *WeChat) UploadMedia(name, to string) (string, error) {
 		mediatype = `doc`
 	}
 
+	log.Println(kind, file.Name(), mediatype, wc.Cookie["webwx_data_ticket"])
 	atomic.AddUint32(&wc.MediaCount, 1)
 	fields := map[string]string{
 		`id`:                `WU_FILE_` + strconv.Itoa(int(wc.MediaCount)), //@liwei
@@ -1431,7 +1442,7 @@ func (wc *WeChat) UploadMedia(name, to string) (string, error) {
 		DataLen:       strconv.FormatInt(file.Size(), 10),
 		//UploadType:    2,
 		MediaType:    4,
-		ToUserName:   "cp4",
+		ToUserName:   to,
 		FromUserName: wc.UserName,
 		//FileMd5:       string(md5.New().Sum(buf)),
 	})
@@ -1439,8 +1450,8 @@ func (wc *WeChat) UploadMedia(name, to string) (string, error) {
 	writer.WriteField(`uploadmediarequest`, string(data))
 	writer.Close()
 
-	//req, err := http.NewRequest("POST", "https://file.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json", buffer)
-	req, err := http.NewRequest("POST", "https://file2.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json", buffer)
+	req, err := http.NewRequest("POST", "https://file.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json", buffer)
+	//req, err := http.NewRequest("POST", "https://file2.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json", buffer)
 	if err != nil {
 		return "", err
 	}

@@ -59,6 +59,26 @@ func (h *Handler) Handle(msg *message.LocalMessage) *message.LocalMessage {
 	return nil
 }
 
+func (h *Handler) SetName(name string) *Handler {
+	h.name = name
+	return h
+}
+
+func (h *Handler) SetState(state bool) *Handler {
+	h.state = state
+	return h
+}
+
+func (h *Handler) SetType(t int) *Handler {
+	h.msgtype = t
+	return h
+}
+
+func (h *Handler) SetHandleFunc(handle HandleFunc) *Handler {
+	h.handle = handle
+	return h
+}
+
 func init() {
 	DefaultHandlers = make([]*Handler, 0, len(message.Type))
 	for t, n := range message.Type {
