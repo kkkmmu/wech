@@ -1481,6 +1481,9 @@ func (wc *WeChat) UploadMedia(name, to string) (string, error) {
 		return "", err
 	}
 	wc.DB.Save("UploadMediaResponse.json", save)
+	if result.MediaID == "" {
+		return "", errors.New("Upload media error: " + result.BaseResponse.ErrMsg)
+	}
 	return result.MediaID, nil
 }
 
