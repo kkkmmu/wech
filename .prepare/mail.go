@@ -6,11 +6,12 @@ import (
 	"strings"
 )
 
+//注意，网易邮箱需要在邮箱中设置第三方客户端登录授权
 const (
 	HOST        = "smtp.163.com"
 	SERVER_ADDR = "smtp.163.com:25"
-	USER        = "lwnope@163.com"  //发送邮件的邮箱
-	PASSWORD    = "sirus0@sina.com" //发送邮件邮箱的密码
+	USER        = "mramru@163.com" //发送邮件的邮箱
+	PASSWORD    = "Lee123"         //发送邮件邮箱的密码
 )
 
 type Email struct {
@@ -53,7 +54,7 @@ func SendEmail(email *Email) error {
 }
 
 func main() {
-	email := NewEmail("kkkmmu@163.com", "IBM峰会资料下载地址", "IBM峰会资料下载地址IBM峰会资料下载地址IBM峰会资料下载地址")
+	email := NewEmail("liwei@tomato-soft.com", "Thanks", "Thans")
 
 	err := SendEmail(email)
 
